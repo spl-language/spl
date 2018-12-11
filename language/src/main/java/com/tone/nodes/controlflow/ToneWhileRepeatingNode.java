@@ -50,24 +50,11 @@ public final class ToneWhileRepeatingNode extends Node implements RepeatingNode 
             return false;
         }
 
-        try {
-            /* Execute the loop body. */
-            bodyNode.executeVoid(frame);
-            /* Continue with next loop iteration. */
-            return true;
+        /* Execute the loop body. */
+        bodyNode.executeVoid(frame);
 
-        } catch (ToneContinueException ex) {
-            /* In the interpreter, record profiling information that the loop uses continue. */
-            continueTaken.enter();
-            /* Continue with next loop iteration. */
-            return true;
-
-        } catch (ToneBreakException ex) {
-            /* In the interpreter, record profiling information that the loop uses break. */
-            breakTaken.enter();
-            /* Break out of the loop. */
-            return false;
-        }
+        /* Continue with next loop iteration. */
+        return true;
     }
 
     private boolean evaluateCondition(VirtualFrame frame) {

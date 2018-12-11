@@ -109,8 +109,6 @@ statement [boolean inLoop] returns [ToneStatementNode result]
 (
     while_statement                             { $result = $while_statement.result; }
 |
-    for_statement                               { $result = $for_statement.result; }
-|
     b='break'                                   { if (inLoop) { $result = factory.createBreak($b); } else { SemErr($b, "break used outside of loop"); } }
     ';'
 |
@@ -136,28 +134,6 @@ w='while'
 condition=expression
 ')'
 body=block[true]                                { $result = factory.createWhile($w, $condition.result, $body.result); }
-;
-
-
-for_statement returns [ToneStatementNode result]
-:
-f='for'
-'('                                             { ToneExpressionNode initPart = null; }
-                                                { ToneExpressionNode conditionPart = null; }
-                                                { ToneExpressionNode incrementPart = null; }
-(
-init=expression                                 { initPart = $init.result; }
-)?
-';'
-(
-condition=expression                            { conditionPart = $condition.result; }
-)?
-';'
-(
-increment=expression                            { incrementPart = $increment.result; }
-)?
-')'
-body=block[true]                                { $result = factory.createFor($f, initPart, conditionPart, incrementPart, $body.result); }
 ;
 
 

@@ -19,9 +19,7 @@ import com.tone.nodes.access.ToneWritePropertyNodeGen;
 import com.tone.nodes.call.ToneInvokeNode;
 import com.tone.nodes.controlflow.ToneBlockNode;
 import com.tone.nodes.controlflow.ToneBreakNode;
-import com.tone.nodes.controlflow.ToneContinueNode;
 import com.tone.nodes.controlflow.ToneDebuggerNode;
-import com.tone.nodes.controlflow.ToneForNode;
 import com.tone.nodes.controlflow.ToneFunctionBodyNode;
 import com.tone.nodes.controlflow.ToneIfNode;
 import com.tone.nodes.controlflow.ToneReturnNode;
@@ -236,18 +234,6 @@ public class ToneNodeFactory {
     }
 
     /**
-     * Returns an {@link ToneContinueNode} for the given token.
-     *
-     * @param continueToken The token containing the continue node's info.
-     * @return A ToneContinueNode built using the given token.
-     */
-    public ToneStatementNode createContinue(Token continueToken) {
-        final ToneContinueNode continueNode = new ToneContinueNode();
-        srcFromToken(continueNode, continueToken);
-        return continueNode;
-    }
-
-    /**
      * Returns an {@link ToneWhileNode} for the given parameters.
      *
      * @param whileToken The token containing the while node's info
@@ -267,26 +253,6 @@ public class ToneNodeFactory {
         final ToneWhileNode whileNode = new ToneWhileNode(conditionNode, bodyNode);
         whileNode.setSourceSection(start, end - start);
         return whileNode;
-    }
-
-    public ToneStatementNode createFor(Token f, ToneStatementNode initNode, ToneExpressionNode conditionNode, ToneStatementNode iteration, ToneStatementNode bodyNode) {
-        if (bodyNode == null) {
-            return null;
-        }
-        if (initNode != null) {
-            initNode.addStatementTag();
-        }
-        if (conditionNode != null) {
-            conditionNode.addStatementTag();
-        }
-        if (iteration != null) {
-            iteration.addStatementTag();
-        }
-        int startIndex = f.getStartIndex();
-        int sourceEndIndex = bodyNode.getSourceEndIndex();
-        ToneForNode toneForNode = new ToneForNode(initNode, conditionNode, iteration, bodyNode);
-        toneForNode.setSourceSection(startIndex, sourceEndIndex - startIndex);
-        return toneForNode;
     }
 
     /**
