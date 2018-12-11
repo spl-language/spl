@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.ToneBinaryNode;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneRootNode;
@@ -18,7 +18,6 @@ import com.tone.nodes.access.ToneWritePropertyNode;
 import com.tone.nodes.access.ToneWritePropertyNodeGen;
 import com.tone.nodes.call.ToneInvokeNode;
 import com.tone.nodes.controlflow.ToneBlockNode;
-import com.tone.nodes.controlflow.ToneBreakNode;
 import com.tone.nodes.controlflow.ToneDebuggerNode;
 import com.tone.nodes.controlflow.ToneFunctionBodyNode;
 import com.tone.nodes.controlflow.ToneIfNode;
@@ -93,9 +92,9 @@ public class ToneNodeFactory {
 
     /* State while parsing a block. */
     private LexicalScope lexicalScope;
-    private final ToneLanguage language;
+    private final SplLanguage language;
 
-    public ToneNodeFactory(ToneLanguage language, Source source) {
+    public ToneNodeFactory(SplLanguage language, Source source) {
         this.language = language;
         this.source = source;
         this.allFunctions = new HashMap<>();
@@ -222,18 +221,6 @@ public class ToneNodeFactory {
     }
 
     /**
-     * Returns an {@link ToneBreakNode} for the given token.
-     *
-     * @param breakToken The token containing the break node's info.
-     * @return A ToneBreakNode for the given token.
-     */
-    public ToneStatementNode createBreak(Token breakToken) {
-        final ToneBreakNode breakNode = new ToneBreakNode();
-        srcFromToken(breakNode, breakToken);
-        return breakNode;
-    }
-
-    /**
      * Returns an {@link ToneWhileNode} for the given parameters.
      *
      * @param whileToken The token containing the while node's info
@@ -261,19 +248,18 @@ public class ToneNodeFactory {
      * @param ifToken The token containing the if node's info
      * @param conditionNode The condition node of this if statement
      * @param thenPartNode The then part of the if
-     * @param elsePartNode The else part of the if (null if no else part)
      * @return An ToneIfNode for the given parameters. null if either conditionNode or thenPartNode is
      *         null.
      */
-    public ToneStatementNode createIf(Token ifToken, ToneExpressionNode conditionNode, ToneStatementNode thenPartNode, ToneStatementNode elsePartNode) {
+    public ToneStatementNode createIf(Token ifToken, ToneExpressionNode conditionNode, ToneStatementNode thenPartNode) {
         if (conditionNode == null || thenPartNode == null) {
             return null;
         }
 
         conditionNode.addStatementTag();
         final int start = ifToken.getStartIndex();
-        final int end = elsePartNode == null ? thenPartNode.getSourceEndIndex() : elsePartNode.getSourceEndIndex();
-        final ToneIfNode ifNode = new ToneIfNode(conditionNode, thenPartNode, elsePartNode);
+        final int end = thenPartNode.getSourceEndIndex();
+        final ToneIfNode ifNode = new ToneIfNode(conditionNode, thenPartNode);
         ifNode.setSourceSection(start, end - start);
         return ifNode;
     }

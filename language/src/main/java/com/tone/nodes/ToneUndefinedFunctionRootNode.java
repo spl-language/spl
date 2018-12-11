@@ -2,7 +2,7 @@ package com.tone.nodes;
 
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.runtime.ToneUndefinedNameException;
 import com.tone.runtime.ToneFunction;
 
@@ -12,7 +12,7 @@ import com.tone.runtime.ToneFunction;
  * {@link ToneUndefinedNameException#undefinedFunction exception}.
  */
 public class ToneUndefinedFunctionRootNode extends ToneRootNode {
-    public ToneUndefinedFunctionRootNode(ToneLanguage language, String name) {
+    public ToneUndefinedFunctionRootNode(SplLanguage language, String name) {
         super(language, null, null, null, name);
     }
 

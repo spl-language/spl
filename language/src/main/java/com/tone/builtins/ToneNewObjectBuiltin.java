@@ -4,7 +4,7 @@ import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 /**
  * Built-in function to create a new object. Objects in Tone are simply made up of name/value pairs.
@@ -13,7 +13,7 @@ import com.tone.runtime.ToneContext;
 public abstract class ToneNewObjectBuiltin extends ToneBuiltinNode {
 
     @CompilationFinal
-    ToneContext context;
+    SplContext context;
 
     @Specialization
     public Object newObject() {

@@ -10,7 +10,7 @@ import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.nodes.Node;
 import com.tone.nodes.ToneTypes;
 import com.tone.nodes.runtime.ToneNull;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 /**
  * The node for converting a foreign primitive or boxed primitive value to an Tone value.
@@ -22,7 +22,7 @@ public abstract class ToneForeignToToneTypeNode extends Node {
 
     @Specialization
     protected static Object fromObject(Number value) {
-        return ToneContext.fromForeignValue(value);
+        return SplContext.fromForeignValue(value);
     }
 
     @Specialization
@@ -46,7 +46,7 @@ public abstract class ToneForeignToToneTypeNode extends Node {
     @Specialization(guards = "isBoxedPrimitive(value)")
     public Object unbox(TruffleObject value) {
         Object unboxed = doUnbox(value);
-        return ToneContext.fromForeignValue(unboxed);
+        return SplContext.fromForeignValue(unboxed);
     }
 
     @Specialization(guards = "!isBoxedPrimitive(value)")

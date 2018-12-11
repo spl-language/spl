@@ -3,9 +3,9 @@ package com.tone.runtime;
 import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.source.Source;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.runtime.FunctionsObject;
-import com.tone.parser.ToneParser;
+import com.tone.parser.SplParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,10 +18,10 @@ import java.util.Map;
  */
 public final class ToneFunctionRegistry {
 
-    private final ToneLanguage language;
+    private final SplLanguage language;
     private final FunctionsObject functionsObject = new FunctionsObject();
 
-    public ToneFunctionRegistry(ToneLanguage language) {
+    public ToneFunctionRegistry(SplLanguage language) {
         this.language = language;
     }
 
@@ -56,7 +56,7 @@ public final class ToneFunctionRegistry {
     }
 
     public void register(Source newFunctions) {
-        register(ToneParser.parseTone(language, newFunctions));
+        register(SplParser.parseSpl(language, newFunctions));
     }
 
     public ToneFunction getFunction(String name) {

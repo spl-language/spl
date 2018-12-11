@@ -16,7 +16,7 @@ import com.oracle.truffle.api.object.DynamicObject;
 import com.oracle.truffle.api.object.Layout;
 import com.oracle.truffle.api.object.Shape;
 import com.oracle.truffle.api.source.Source;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.builtins.ToneBuiltinNode;
 import com.tone.builtins.TonePrintLnBuiltin;
 import com.tone.builtins.TonePrintLnBuiltinFactory;
@@ -32,16 +32,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The run-time state of Tone during execution. The context is created by the {@link ToneLanguage}. It
+ * The run-time state of Tone during execution. The context is created by the {@link SplLanguage}. It
  * is used, for example, by {@link ToneBuiltinNode#getContext() builtin functions}.
  * <p>
  * It would be an error to have two different context instances during the execution of one script.
  * However, if two separate scripts run in one Java VM at the same time, they have a different
  * context. Therefore, the context is not a singleton.
  */
-public final class ToneContext {
+public final class SplContext {
 
-    private static final Source BUILTIN_SOURCE = Source.newBuilder(ToneLanguage.ID, "", "Tone builtin").build();
+    private static final Source BUILTIN_SOURCE = Source.newBuilder(SplLanguage.ID, "", "Tone builtin").build();
     private static final Layout LAYOUT = Layout.createLayout();
 
     private final Env env;
@@ -49,11 +49,11 @@ public final class ToneContext {
     private final PrintWriter output;
     private final ToneFunctionRegistry functionRegistry;
     private final Shape emptyShape;
-    private final ToneLanguage language;
+    private final SplLanguage language;
     private final AllocationReporter allocationReporter;
     private final Iterable<Scope> topScopes; // Cache the top scopes
 
-    public ToneContext(ToneLanguage language, TruffleLanguage.Env env, List<NodeFactory<? extends ToneBuiltinNode>> externalBuiltins) {
+    public SplContext(SplLanguage language, TruffleLanguage.Env env, List<NodeFactory<? extends ToneBuiltinNode>> externalBuiltins) {
         this.env = env;
         this.input = new BufferedReader(new InputStreamReader(env.in()));
         this.output = new PrintWriter(env.out(), true);
@@ -206,7 +206,7 @@ public final class ToneContext {
             return fromForeignNumber(a);
         } else if (a instanceof TruffleObject) {
             return a;
-        } else if (a instanceof ToneContext) {
+        } else if (a instanceof SplContext) {
             return a;
         }
         CompilerDirectives.transferToInterpreter();
@@ -230,7 +230,7 @@ public final class ToneContext {
         return (TruffleObject) env.getPolyglotBindings();
     }
 
-    public static ToneContext getCurrent() {
-        return ToneLanguage.getCurrentContext();
+    public static SplContext getCurrent() {
+        return SplLanguage.getCurrentContext();
     }
 }

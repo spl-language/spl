@@ -7,7 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.SourceSection;
 import com.tone.nodes.runtime.ToneNull;
 import com.tone.runtime.ToneBigNumber;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 /**
  * Tone does not need a sophisticated error checking and reporting mechanism, so all unexpected
@@ -54,7 +54,7 @@ public class ToneException extends RuntimeException implements TruffleException 
 
         result.append(": operation");
         if (operation != null) {
-            NodeInfo nodeInfo = ToneContext.lookupNodeInfo(operation.getClass());
+            NodeInfo nodeInfo = SplContext.lookupNodeInfo(operation.getClass());
             if (nodeInfo != null) {
                 result.append(" \"").append(nodeInfo.shortName()).append("\"");
             }

@@ -9,7 +9,7 @@ import com.tone.nodes.call.ToneDispatchNode;
 import com.tone.nodes.call.ToneDispatchNodeGen;
 import com.tone.runtime.ToneFunction;
 
-import static com.tone.runtime.ToneContext.fromForeignValue;
+import static com.tone.runtime.SplContext.fromForeignValue;
 
 /**
  * The class containing all message resolution implementations of {@link ToneFunction}.

@@ -25,16 +25,11 @@ public final class ToneIfNode extends ToneStatementNode {
     @Node.Child
     private ToneStatementNode thenPartNode;
 
-    /** Statement (or {@link ToneBlockNode block}) executed when the condition is false. */
-    @Node.Child
-    private ToneStatementNode elsePartNode;
-
     private final ConditionProfile condition = ConditionProfile.createCountingProfile();
 
-    public ToneIfNode(ToneExpressionNode conditionNode, ToneStatementNode thenPartNode, ToneStatementNode elsePartNode) {
+    public ToneIfNode(ToneExpressionNode conditionNode, ToneStatementNode thenPartNode) {
         this.conditionNode = ToneUnboxNodeGen.create(conditionNode);
         this.thenPartNode = thenPartNode;
-        this.elsePartNode = elsePartNode;
     }
 
     @Override
@@ -46,11 +41,6 @@ public final class ToneIfNode extends ToneStatementNode {
         if (condition.profile(evaluateCondition(frame))) {
             /* Execute the then-branch. */
             thenPartNode.executeVoid(frame);
-        } else {
-            /* Execute the else-branch (which is optional according to the Tone syntax). */
-            if (elsePartNode != null) {
-                elsePartNode.executeVoid(frame);
-            }
         }
     }
 
@@ -60,7 +50,7 @@ public final class ToneIfNode extends ToneStatementNode {
              * The condition must evaluate to a boolean value, so we call the boolean-specialized
              * execute method.
              */
-            return conditionNode.executeBoolean(frame);
+            return conditionNode.executeLong(frame) > 0;
         } catch (UnexpectedResultException ex) {
             /*
              * The condition evaluated to a non-boolean result. This is a type error in the Tone

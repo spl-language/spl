@@ -3,12 +3,12 @@ package com.tone.builtins;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 import java.io.PrintWriter;
 
 /**
- * Builtin function to write a value to the {@link ToneContext#getOutput() standard output}. The
+ * Builtin function to write a value to the {@link SplContext#getOutput() standard output}. The
  * different specialization leverage the typed {@code println} methods available in Java, i.e.,
  * primitive values are printed without converting them to a {@link String} first.
  * <p>

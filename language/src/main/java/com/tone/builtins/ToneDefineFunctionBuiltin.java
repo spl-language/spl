@@ -4,7 +4,7 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 
 /**
  * Builtin function to define (or redefine) functions. The provided source code is parsed the same
@@ -17,7 +17,7 @@ public abstract class ToneDefineFunctionBuiltin extends ToneBuiltinNode {
     @Specialization
     public String defineFunction(String code) {
         // @formatter:off
-        Source source = Source.newBuilder(ToneLanguage.ID, code, "[defineFunction]").
+        Source source = Source.newBuilder(SplLanguage.ID, code, "[defineFunction]").
             build();
         // @formatter:on
         /* The same parsing code as for parsing the initial source. */

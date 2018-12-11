@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.SourceSection;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.builtins.ToneBuiltinNode;
 import com.tone.nodes.controlflow.ToneFunctionBodyNode;
 
@@ -30,7 +30,7 @@ public class ToneRootNode extends RootNode {
 
     private final SourceSection sourceSection;
 
-    public ToneRootNode(ToneLanguage language, FrameDescriptor frameDescriptor, ToneExpressionNode bodyNode, SourceSection sourceSection, String name) {
+    public ToneRootNode(SplLanguage language, FrameDescriptor frameDescriptor, ToneExpressionNode bodyNode, SourceSection sourceSection, String name) {
         super(language, frameDescriptor);
         this.bodyNode = bodyNode;
         this.name = name;
@@ -44,7 +44,7 @@ public class ToneRootNode extends RootNode {
 
     @Override
     public Object execute(VirtualFrame frame) {
-        assert getLanguage(ToneLanguage.class).getContextReference().get() != null;
+        assert getLanguage(SplLanguage.class).getContextReference().get() != null;
         return bodyNode.executeGeneric(frame);
     }
 

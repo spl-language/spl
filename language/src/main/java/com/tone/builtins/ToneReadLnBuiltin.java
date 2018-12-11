@@ -4,13 +4,13 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.tone.ToneException;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
- * Builtin function that reads a String from the {@link ToneContext#getInput() standard input}.
+ * Builtin function that reads a String from the {@link SplContext#getInput() standard input}.
  */
 @NodeInfo(shortName = "readln")
 public abstract class ToneReadLnBuiltin extends ToneBuiltinNode {

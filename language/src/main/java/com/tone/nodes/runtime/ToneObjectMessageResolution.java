@@ -17,7 +17,7 @@ import com.tone.nodes.call.ToneDispatchNode;
 import com.tone.nodes.call.ToneDispatchNodeGen;
 import com.tone.nodes.interop.ToneForeignToToneTypeNode;
 import com.tone.nodes.interop.ToneForeignToToneTypeNodeGen;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 import com.tone.runtime.ToneFunction;
 import com.tone.runtime.ToneObjectType;
 
@@ -113,7 +113,7 @@ public class ToneObjectMessageResolution {
                 // Tone
                 // values.
                 for (int i = 0; i < arguments.length; i++) {
-                    arr[i] = ToneContext.fromForeignValue(arguments[i]);
+                    arr[i] = SplContext.fromForeignValue(arguments[i]);
                 }
                 Object result = dispatch.executeDispatch(function, arr);
                 return result;

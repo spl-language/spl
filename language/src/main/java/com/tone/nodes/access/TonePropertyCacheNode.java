@@ -9,8 +9,8 @@ import com.oracle.truffle.api.object.Shape;
 import com.tone.nodes.ToneTypes;
 import com.tone.nodes.expression.ToneEqualNode;
 import com.tone.nodes.runtime.ToneNull;
+import com.tone.runtime.SplContext;
 import com.tone.runtime.ToneBigNumber;
-import com.tone.runtime.ToneContext;
 import com.tone.runtime.ToneFunction;
 
 @TypeSystemReference(ToneTypes.class)
@@ -23,7 +23,7 @@ public abstract class TonePropertyCacheNode extends Node {
 
     protected static Shape lookupShape(DynamicObject receiver) {
         CompilerAsserts.neverPartOfCompilation();
-        assert ToneContext.isToneObject(receiver);
+        assert SplContext.isToneObject(receiver);
         return receiver.getShape();
     }
 

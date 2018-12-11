@@ -16,7 +16,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.object.DynamicObject;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.runtime.ToneUndefinedNameException;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 /**
  * The node for writing a property of an object. When executed, this node:
@@ -32,7 +32,7 @@ import com.tone.runtime.ToneContext;
 @NodeChild("receiverNode")
 @NodeChild("nameNode")
 @NodeChild("valueNode")
-@ImportStatic({ToneContext.class, Message.class})
+@ImportStatic({SplContext.class, Message.class})
 public abstract class ToneWritePropertyNode extends ToneExpressionNode {
 
     @Specialization(guards = "isToneObject(receiver)")

@@ -16,7 +16,7 @@ import com.oracle.truffle.api.object.DynamicObject;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.interop.ToneForeignToToneTypeNode;
 import com.tone.nodes.runtime.ToneUndefinedNameException;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 /**
  * The node for reading a property of an object. When executed, this node:
@@ -29,7 +29,7 @@ import com.tone.runtime.ToneContext;
 @NodeInfo(shortName = ".")
 @NodeChild("receiverNode")
 @NodeChild("nameNode")
-@ImportStatic({ToneContext.class, Message.class})
+@ImportStatic({SplContext.class, Message.class})
 public abstract class ToneReadPropertyNode extends ToneExpressionNode {
 
     @Specialization(guards = "isToneObject(receiver)")

@@ -8,8 +8,8 @@ public class ToneFileDetector extends FileTypeDetector {
 
     @Override
     public String probeContentType(Path path) throws IOException {
-        if (path.getFileName().toString().endsWith(ToneLanguage.EXTENSION)) {
-            return ToneLanguage.MIME_TYPE;
+        if (path.getFileName().toString().endsWith(SplLanguage.EXTENSION)) {
+            return SplLanguage.MIME_TYPE;
         }
         return null;
     }

@@ -7,9 +7,9 @@ import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.DirectCallNode;
 import com.oracle.truffle.api.nodes.RootNode;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.runtime.ToneNull;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 
 import java.util.Map;
 
@@ -30,12 +30,12 @@ public final class ToneEvalRootNode extends RootNode {
     @CompilationFinal
     private boolean registered;
 
-    private final ContextReference<ToneContext> reference;
+    private final ContextReference<SplContext> reference;
 
     @Child
     private DirectCallNode mainCallNode;
 
-    public ToneEvalRootNode(ToneLanguage language, RootCallTarget rootFunction, Map<String, RootCallTarget> functions) {
+    public ToneEvalRootNode(SplLanguage language, RootCallTarget rootFunction, Map<String, RootCallTarget> functions) {
         super(null); // internal frame
         this.functions = functions;
         this.mainCallNode = rootFunction != null ? DirectCallNode.create(rootFunction) : null;
@@ -74,7 +74,7 @@ public final class ToneEvalRootNode extends RootNode {
             /* Conversion of arguments to types understood by Tone. */
             Object[] arguments = frame.getArguments();
             for (int i = 0; i < arguments.length; i++) {
-                arguments[i] = ToneContext.fromForeignValue(arguments[i]);
+                arguments[i] = SplContext.fromForeignValue(arguments[i]);
             }
             return mainCallNode.call(arguments);
         }

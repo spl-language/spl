@@ -14,7 +14,7 @@ public final class ToneObjectType extends ObjectType {
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return ToneContext.isToneObject(obj);
+        return SplContext.isToneObject(obj);
     }
 
     @Override

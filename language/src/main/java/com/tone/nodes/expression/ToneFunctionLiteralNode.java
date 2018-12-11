@@ -6,9 +6,9 @@ import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.ToneExpressionNode;
-import com.tone.runtime.ToneContext;
+import com.tone.runtime.SplContext;
 import com.tone.runtime.ToneFunction;
 import com.tone.runtime.ToneFunctionRegistry;
 
@@ -26,16 +26,16 @@ public final class ToneFunctionLiteralNode extends ToneExpressionNode {
 
     /**
      * The resolved function. During parsing (in the constructor of this node), we do not have the
-     * {@link ToneContext} available yet, so the lookup can only be done at {@link #executeGeneric
+     * {@link SplContext} available yet, so the lookup can only be done at {@link #executeGeneric
      * first execution}. The {@link CompilationFinal} annotation ensures that the function can still
      * be constant folded during compilation.
      */
     @CompilationFinal
     private ToneFunction cachedFunction;
 
-    private final ContextReference<ToneContext> reference;
+    private final ContextReference<SplContext> reference;
 
-    public ToneFunctionLiteralNode(ToneLanguage language, String functionName) {
+    public ToneFunctionLiteralNode(SplLanguage language, String functionName) {
         this.functionName = functionName;
         this.reference = language.getContextReference();
     }

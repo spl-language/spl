@@ -14,13 +14,13 @@ import java.util.Map;
 
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.RootCallTarget;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneStatementNode;
 import com.tone.parser.ToneParseError;
 import com.tone.parser.ToneNodeFactory;
-import com.tone.parser.ToneLexer;
+import com.tone.parser.SplLexer;
 }
 
 @lexer::header
@@ -51,9 +51,9 @@ public void SemErr(Token token, String message) {
     throw new ToneParseError(source, token.getLine(), col, token.getText().length(), String.format("Error(s) parsing script:%n" + location + message));
 }
 
-public static Map<String, RootCallTarget> parseTone(ToneLanguage language, Source source) {
-    ToneLexer lexer = new ToneLexer(CharStreams.fromString(source.getCharacters().toString()));
-    ToneParser parser = new ToneParser(new CommonTokenStream(lexer));
+public static Map<String, RootCallTarget> parseSpl(SplLanguage language, Source source) {
+    SplLexer lexer = new SplLexer(CharStreams.fromString(source.getCharacters().toString()));
+    SplParser parser = new SplParser(new CommonTokenStream(lexer));
     lexer.removeErrorListeners();
     parser.removeErrorListeners();
     BailoutErrorListener listener = new BailoutErrorListener(source);
@@ -95,11 +95,11 @@ body=block[false]                               { factory.finishFunction($body.r
 block [boolean inLoop] returns [ToneStatementNode result]
 :                                               { factory.startBlock();
                                                   List<ToneStatementNode> body = new ArrayList<>(); }
-s='{'
+s='begin'
 (
     statement[inLoop]                           { body.add($statement.result); }
 )*
-e='}'
+e='end'
                                                 { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 ;
 
@@ -108,12 +108,6 @@ statement [boolean inLoop] returns [ToneStatementNode result]
 :
 (
     while_statement                             { $result = $while_statement.result; }
-|
-    b='break'                                   { if (inLoop) { $result = factory.createBreak($b); } else { SemErr($b, "break used outside of loop"); } }
-    ';'
-|
-    c='continue'                                { if (inLoop) { $result = factory.createContinue($c); } else { SemErr($c, "continue used outside of loop"); } }
-    ';'
 |
     if_statement[inLoop]                        { $result = $if_statement.result; }
 |
@@ -140,14 +134,11 @@ body=block[true]                                { $result = factory.createWhile(
 if_statement [boolean inLoop] returns [ToneStatementNode result]
 :
 i='if'
-'('
 condition=expression
-')'
+'then'
 then=block[inLoop]                              { ToneStatementNode elsePart = null; }
-(
-    'else'
-    block[inLoop]                               { elsePart = $block.result; }
-)?                                              { $result = factory.createIf($i, $condition.result, $then.result, elsePart); }
+'end'
+                                                { $result = factory.createIf($i, $condition.result, $then.result); }
 ;
 
 

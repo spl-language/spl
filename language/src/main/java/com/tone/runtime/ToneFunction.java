@@ -7,7 +7,7 @@ import com.oracle.truffle.api.TruffleLogger;
 import com.oracle.truffle.api.interop.ForeignAccess;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.utilities.CyclicAssumption;
-import com.tone.ToneLanguage;
+import com.tone.SplLanguage;
 import com.tone.nodes.ToneUndefinedFunctionRootNode;
 import com.tone.nodes.runtime.ToneFunctionMessageResolution;
 import com.tone.nodes.runtime.ToneFunctionMessageResolutionForeign;
@@ -32,7 +32,7 @@ import java.util.logging.Level;
  * encapsulates a {@link ToneUndefinedFunctionRootNode}.
  */
 public final class ToneFunction implements TruffleObject {
-    private static final TruffleLogger LOG = TruffleLogger.getLogger(ToneLanguage.ID, ToneFunction.class);
+    private static final TruffleLogger LOG = TruffleLogger.getLogger(SplLanguage.ID, ToneFunction.class);
 
     /** The name of the function. */
     private final String name;
@@ -47,7 +47,7 @@ public final class ToneFunction implements TruffleObject {
      */
     private final CyclicAssumption callTargetStable;
 
-    protected ToneFunction(ToneLanguage language, String name) {
+    protected ToneFunction(SplLanguage language, String name) {
         this.name = name;
         this.callTarget = Truffle.getRuntime().createCallTarget(new ToneUndefinedFunctionRootNode(language, name));
         this.callTargetStable = new CyclicAssumption(name);

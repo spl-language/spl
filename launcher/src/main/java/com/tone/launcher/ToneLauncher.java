@@ -15,7 +15,7 @@ import java.util.Map;
 
 public final class ToneLauncher {
 
-    private static final String TONE = "tone";
+    private static final String TONE = "spl";
 
     /**
      * The main entry point.

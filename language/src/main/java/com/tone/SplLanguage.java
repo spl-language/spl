@@ -20,9 +20,9 @@ import com.tone.builtins.ToneBuiltinNode;
 import com.tone.nodes.ToneEvalRootNode;
 import com.tone.nodes.local.ToneLexicalScope;
 import com.tone.nodes.runtime.ToneNull;
-import com.tone.parser.ToneParser;
+import com.tone.parser.SplParser;
+import com.tone.runtime.SplContext;
 import com.tone.runtime.ToneBigNumber;
-import com.tone.runtime.ToneContext;
 import com.tone.runtime.ToneFunction;
 
 import java.util.ArrayList;
@@ -32,22 +32,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-@TruffleLanguage.Registration(id = ToneLanguage.ID, name = "Tone", defaultMimeType = ToneLanguage.MIME_TYPE, characterMimeTypes = ToneLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED)
+@TruffleLanguage.Registration(id = SplLanguage.ID, name = "Tone", defaultMimeType = SplLanguage.MIME_TYPE, characterMimeTypes = SplLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED)
 @ProvidedTags({StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class, StandardTags.ExpressionTag.class, DebuggerTags.AlwaysHalt.class})
-public final class ToneLanguage extends TruffleLanguage<ToneContext> {
+public final class SplLanguage extends TruffleLanguage<SplContext> {
     public static volatile int counter;
 
-    public static final String EXTENSION = "tone";
-    public static final String ID = "tone";
+    public static final String EXTENSION = "spl";
+    public static final String ID = "spl";
     public static final String MIME_TYPE = "application/x-tone";
 
-    public ToneLanguage() {
+    public SplLanguage() {
         counter++;
     }
 
     @Override
-    protected ToneContext createContext(Env env) {
-        return new ToneContext(this, env, new ArrayList<>(EXTERNAL_BUILTINS));
+    protected SplContext createContext(Env env) {
+        return new SplContext(this, env, new ArrayList<>(EXTERNAL_BUILTINS));
     }
 
     @Override
@@ -55,11 +55,11 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
         Source source = request.getSource();
         Map<String, RootCallTarget> functions;
         /*
-         * Parse the provided source. At this point, we do not have a ToneContext yet. Registration of
-         * the functions with the ToneContext happens lazily in ToneEvalRootNode.
+         * Parse the provided source. At this point, we do not have a SplContext yet. Registration of
+         * the functions with the SplContext happens lazily in ToneEvalRootNode.
          */
         if (request.getArgumentNames().isEmpty()) {
-            functions = ToneParser.parseTone(this, source);
+            functions = SplParser.parseSpl(this, source);
         } else {
             Source requestedSource = request.getSource();
             StringBuilder sb = new StringBuilder();
@@ -75,7 +75,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
             sb.append(";}");
             String language = requestedSource.getLanguage() == null ? ID : requestedSource.getLanguage();
             Source decoratedSource = Source.newBuilder(language, sb.toString(), request.getSource().getName()).build();
-            functions = ToneParser.parseTone(this, decoratedSource);
+            functions = SplParser.parseSpl(this, decoratedSource);
         }
 
         RootCallTarget main = functions.get("main");
@@ -83,7 +83,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
         if (main != null) {
             /*
              * We have a main function, so "evaluating" the parsed source means invoking that main
-             * function. However, we need to lazily register functions into the ToneContext first, so
+             * function. However, we need to lazily register functions into the SplContext first, so
              * we cannot use the original ToneRootNode for the main function. Instead, we create a new
              * ToneEvalRootNode that does everything we need.
              */
@@ -91,7 +91,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
         } else {
             /*
              * Even without a main function, "evaluating" the parsed source needs to register the
-             * functions into the ToneContext.
+             * functions into the SplContext.
              */
             evalMain = new ToneEvalRootNode(this, null, functions);
         }
@@ -104,12 +104,12 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
      */
     @SuppressWarnings("deprecation")
     @Override
-    protected Object findExportedSymbol(ToneContext context, String globalName, boolean onlyExplicit) {
+    protected Object findExportedSymbol(SplContext context, String globalName, boolean onlyExplicit) {
         return context.getFunctionRegistry().lookup(globalName, false);
     }
 
     @Override
-    protected boolean isVisible(ToneContext context, Object value) {
+    protected boolean isVisible(SplContext context, Object value) {
         return value != ToneNull.SINGLETON;
     }
 
@@ -119,11 +119,11 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
             return false;
         }
         TruffleObject truffleObject = (TruffleObject) object;
-        return truffleObject instanceof ToneFunction || truffleObject instanceof ToneBigNumber || ToneContext.isToneObject(truffleObject);
+        return truffleObject instanceof ToneFunction || truffleObject instanceof ToneBigNumber || SplContext.isToneObject(truffleObject);
     }
 
     @Override
-    protected String toString(ToneContext context, Object value) {
+    protected String toString(SplContext context, Object value) {
         if (value == ToneNull.SINGLETON) {
             return "NULL";
         }
@@ -137,7 +137,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
     }
 
     @Override
-    protected Object findMetaObject(ToneContext context, Object value) {
+    protected Object findMetaObject(SplContext context, Object value) {
         if (value instanceof Number || value instanceof ToneBigNumber) {
             return "Number";
         }
@@ -157,7 +157,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
     }
 
     @Override
-    protected SourceSection findSourceLocation(ToneContext context, Object value) {
+    protected SourceSection findSourceLocation(SplContext context, Object value) {
         if (value instanceof ToneFunction) {
             ToneFunction f = (ToneFunction) value;
             return f.getCallTarget().getRootNode().getSourceSection();
@@ -166,7 +166,7 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
     }
 
     @Override
-    public Iterable<Scope> findLocalScopes(ToneContext context, Node node, Frame frame) {
+    public Iterable<Scope> findLocalScopes(SplContext context, Node node, Frame frame) {
         final ToneLexicalScope scope = ToneLexicalScope.createScope(node);
         return new Iterable<Scope>() {
             @Override
@@ -199,12 +199,12 @@ public final class ToneLanguage extends TruffleLanguage<ToneContext> {
     }
 
     @Override
-    protected Iterable<Scope> findTopScopes(ToneContext context) {
+    protected Iterable<Scope> findTopScopes(SplContext context) {
         return context.getTopScopes();
     }
 
-    public static ToneContext getCurrentContext() {
-        return getCurrentContext(ToneLanguage.class);
+    public static SplContext getCurrentContext() {
+        return getCurrentContext(SplLanguage.class);
     }
 
     private static final List<NodeFactory<? extends ToneBuiltinNode>> EXTERNAL_BUILTINS = Collections.synchronizedList(new ArrayList<>());
