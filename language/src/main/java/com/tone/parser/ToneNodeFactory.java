@@ -12,6 +12,7 @@ import com.tone.builtins.TonePrintBuiltin;
 import com.tone.builtins.TonePrintBuiltinNodeGen;
 import com.tone.builtins.ToneReadBuiltin;
 import com.tone.builtins.ToneReadBuiltinNodeGen;
+import com.tone.nodes.SlotInfo;
 import com.tone.nodes.ToneBinaryNode;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneRootNode;
@@ -407,12 +408,39 @@ public class ToneNodeFactory {
      * @return expression to write local variable
      */
     public ToneStatementNode createRead(Token readToken, Token nameOfVariable) {
-        FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(nameOfVariable.getText(), null, FrameSlotKind.Illegal);
+        FrameSlot frameSlot = frameDescriptor.findFrameSlot(nameOfVariable.getText());
+        if (frameSlot == null) {
+            throw new RuntimeException("Variable " + nameOfVariable.getText() + " is not declared.\n Declare it before like \"int " + nameOfVariable.getText() + ";\" Then use it.");
+        } else {
+            Object info = frameSlot.getInfo();
+            if (info != null && !((SlotInfo) info).isUpdatable()) {
+                throw new RuntimeException("You can't update const value.");
+            }
+        }
         lexicalScope.locals.put(nameOfVariable.getText(), frameSlot);
         ToneReadBuiltin toneReadBuiltin = ToneReadBuiltinNodeGen.create();
         final ToneWriteLocalVariableNode result = ToneWriteLocalVariableNodeGen.create(toneReadBuiltin, frameSlot);
 
-        result.setSourceSection(readToken.getStartIndex(), nameOfVariable.getStopIndex() - readToken.getStartIndex() + 1);
+        int length = nameOfVariable.getStopIndex() - readToken.getStartIndex() + 1;
+        result.setSourceSection(readToken.getStartIndex(), length);
+        result.addExpressionTag();
+        return result;
+    }
+
+    public ToneStatementNode declareIntVariable(Token nameOfType, Token nameOfVariable) {
+        FrameSlot frameSlot = frameDescriptor.addFrameSlot(nameOfVariable.getText(), new SlotInfo(true, int.class), FrameSlotKind.Illegal);
+        ToneLongLiteralNode toneLongLiteralNode = new ToneLongLiteralNode(0);
+        final ToneWriteLocalVariableNode result = ToneWriteLocalVariableNodeGen.create(toneLongLiteralNode, frameSlot);
+        result.setSourceSection(nameOfType.getStartIndex(), nameOfVariable.getStopIndex() - nameOfType.getStartIndex() + 1);
+        result.addExpressionTag();
+        return result;
+    }
+
+    public ToneStatementNode declareConstVariable(Token nameOfType, Token nameOfVariable, ToneExpressionNode expressionNode) {
+        FrameSlot frameSlot = frameDescriptor.addFrameSlot(nameOfVariable.getText(), new SlotInfo(false, int.class), FrameSlotKind.Illegal);
+        lexicalScope.locals.put(nameOfVariable.getText(), frameSlot);
+        final ToneWriteLocalVariableNode result = ToneWriteLocalVariableNodeGen.create(expressionNode, frameSlot);
+        result.setSourceSection(nameOfType.getStartIndex(), expressionNode.getSourceEndIndex() - nameOfType.getStartIndex());
         result.addExpressionTag();
         return result;
     }
@@ -442,10 +470,15 @@ public class ToneNodeFactory {
         }
 
         String name = ((ToneStringLiteralNode) nameNode).executeGeneric(null);
-        FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(
-                name,
-                argumentIndex,
-                FrameSlotKind.Illegal);
+        FrameSlot frameSlot = frameDescriptor.findFrameSlot(name);
+        if (frameSlot == null) {
+            throw new RuntimeException("Variable is not declared.\n Declare it before assign something.");
+        } else {
+            Object info = frameSlot.getInfo();
+            if (info != null && !((SlotInfo) info).isUpdatable()) {
+                throw new RuntimeException("You can't update const value.");
+            }
+        }
         lexicalScope.locals.put(name, frameSlot);
         final ToneExpressionNode result = ToneWriteLocalVariableNodeGen.create(valueNode, frameSlot);
 

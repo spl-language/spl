@@ -106,8 +106,6 @@ public final class SplContext {
      * {@link ToneBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
-//        installBuiltin(ToneNanoTimeBuiltinFactory.getInstance());
-//        installBuiltin(ToneDefineFunctionBuiltinFactory.getInstance());
 //        installBuiltin(ToneStackTraceBuiltinFactory.getInstance());
 //        installBuiltin(ToneHelloEqualsWorldBuiltinFactory.getInstance());
 //        installBuiltin(ToneNewObjectBuiltinFactory.getInstance());

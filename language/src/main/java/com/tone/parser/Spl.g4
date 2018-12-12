@@ -118,6 +118,14 @@ statement [boolean inLoop] returns [ToneStatementNode result]
 |
     d='debugger'                                { $result = factory.createDebugger($d); }
 |
+    id='int'
+    IDENTIFIER                                  { $result = factory.declareIntVariable($id, $IDENTIFIER); }
+|
+    id='const'
+    IDENTIFIER
+    '='
+    expression                                  { $result = factory.declareConstVariable($id, $IDENTIFIER, $expression.result); }
+|
     id='print'
     expression                                  { $result = factory.createPrint($id, $expression.result); }
 |

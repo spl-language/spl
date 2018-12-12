@@ -1,6 +1,5 @@
 main()
 begin
-    read x;
-    res = 3 + x;
-    print x
+    const x = 2342;
+    read x
 end
