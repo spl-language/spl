@@ -2,9 +2,8 @@ main()
 begin
     int x;
     read x;
-    if 5 - x then
+    while x do
         print x;
-        print x
+        x = x - 1
     end
-
 end

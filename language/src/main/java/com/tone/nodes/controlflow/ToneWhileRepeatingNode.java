@@ -63,7 +63,7 @@ public final class ToneWhileRepeatingNode extends Node implements RepeatingNode 
              * The condition must evaluate to a boolean value, so we call the boolean-specialized
              * execute method.
              */
-            return conditionNode.executeBoolean(frame);
+            return conditionNode.executeLong(frame) > 0;
         } catch (UnexpectedResultException ex) {
             /*
              * The condition evaluated to a non-boolean result. This is a type error in the Tone

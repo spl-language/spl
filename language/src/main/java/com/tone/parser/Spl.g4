@@ -138,11 +138,23 @@ statement [boolean inLoop] returns [ToneStatementNode result]
 while_statement returns [ToneStatementNode result]
 :
 w='while'
-'('
 condition=expression
-')'
-body=block[true]                                { $result = factory.createWhile($w, $condition.result, $body.result); }
+body=while_block                                { $result = factory.createWhile($w, $condition.result, $body.result); }
 ;
+
+
+while_block returns [ToneStatementNode result]
+:                                               { factory.startBlock();
+                                                  List<ToneStatementNode> body = new ArrayList<>(); }
+s='do'
+(
+    statement[true]';'                          { body.add($statement.result); }
+)*
+    statement[true]                             { body.add($statement.result); }
+e='end'
+                                                { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
+;
+
 
 
 if_statement [boolean inLoop] returns [ToneStatementNode result]
