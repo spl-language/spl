@@ -17,11 +17,16 @@ import java.io.IOException;
 @NodeInfo(shortName = "read")
 public abstract class ToneReadBuiltin extends ToneExpressionNode {
 
-    @Specialization
-    public String read() {
-        SplContext context = getRootNode().getLanguage(SplLanguage.class).getContextReference().get();
+    @Specialization(rewriteOn = NumberFormatException.class)
+    public Long readLong() {
+        String result = doRead(getContext().getInput());
+        return Long.parseLong(result);
+    }
 
-        String result = doRead(context.getInput());
+    @Specialization
+    public String readString() {
+
+        String result = doRead(getContext().getInput());
         if (result == null) {
             /*
              * We do not have a sophisticated end of file handling, so returning an empty string is
@@ -40,5 +45,9 @@ public abstract class ToneReadBuiltin extends ToneExpressionNode {
         } catch (IOException ex) {
             throw new ToneException(ex.getMessage(), this);
         }
+    }
+
+    private final SplContext getContext() {
+        return getRootNode().getLanguage(SplLanguage.class).getContextReference().get();
     }
 }

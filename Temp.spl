@@ -1,5 +1,10 @@
 main()
 begin
-    const x = 2342;
-    read x
+    int x;
+    read x;
+    if 5 - x then
+        print x;
+        print x
+    end
+
 end

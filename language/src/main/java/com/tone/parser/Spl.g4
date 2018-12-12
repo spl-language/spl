@@ -149,10 +149,20 @@ if_statement [boolean inLoop] returns [ToneStatementNode result]
 :
 i='if'
 condition=expression
-'then'
-then=block[inLoop]                              { ToneStatementNode elsePart = null; }
-'end'
-                                                { $result = factory.createIf($i, $condition.result, $then.result); }
+then=if_block[inLoop]                           { $result = factory.createIf($i, $condition.result, $then.result); }
+;
+
+
+if_block [boolean inLoop] returns [ToneStatementNode result]
+:                                               { factory.startBlock();
+                                                  List<ToneStatementNode> body = new ArrayList<>(); }
+s='then'
+(
+    statement[false]';'                        { body.add($statement.result); }
+)*
+    statement[false]                           { body.add($statement.result); }
+e='end'
+                                                { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 ;
 
 
