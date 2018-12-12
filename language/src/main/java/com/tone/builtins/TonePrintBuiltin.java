@@ -1,8 +1,11 @@
 package com.tone.builtins;
 
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.tone.SplLanguage;
+import com.tone.nodes.ToneExpressionNode;
 import com.tone.runtime.SplContext;
 
 import java.io.PrintWriter;
@@ -16,8 +19,9 @@ import java.io.PrintWriter;
  * unconditionally inline everything reachable from the println() method. This is done via the
  * {@link TruffleBoundary} annotations.
  */
-@NodeInfo(shortName = "println")
-public abstract class TonePrintLnBuiltin extends ToneBuiltinNode {
+@NodeInfo(shortName = "print")
+@NodeChild("expressionToPrint")
+public abstract class TonePrintBuiltin extends ToneExpressionNode {
 
     @Specialization
     public long println(long value) {
@@ -61,5 +65,9 @@ public abstract class TonePrintLnBuiltin extends ToneBuiltinNode {
     @TruffleBoundary
     private static void doPrint(PrintWriter out, Object value) {
         out.println(value);
+    }
+
+    private final SplContext getContext() {
+        return getRootNode().getLanguage(SplLanguage.class).getContextReference().get();
     }
 }

@@ -8,6 +8,10 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 import com.tone.SplLanguage;
+import com.tone.builtins.TonePrintBuiltin;
+import com.tone.builtins.TonePrintBuiltinNodeGen;
+import com.tone.builtins.ToneReadBuiltin;
+import com.tone.builtins.ToneReadBuiltinNodeGen;
 import com.tone.nodes.ToneBinaryNode;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneRootNode;
@@ -88,8 +92,6 @@ public class ToneNodeFactory {
     private FrameDescriptor frameDescriptor;
     private List<ToneStatementNode> methodNodes;
 
-    private List<ToneStatementNode> statementNodes;
-
     /* State while parsing a block. */
     private LexicalScope lexicalScope;
     private final SplLanguage language;
@@ -164,7 +166,6 @@ public class ToneNodeFactory {
     }
 
     public void finishStatement(ToneStatementNode statementNode) {
-        statementNodes.add(statementNode);
         final int statementNodeSourceEndIndex = statementNode.getSourceEndIndex();
         final SourceSection functionSrc = source.createSection(functionStartPos, statementNodeSourceEndIndex - functionStartPos);
         final ToneRootNode rootNode = new ToneRootNode(language, frameDescriptor, null, functionSrc, functionName);
@@ -223,11 +224,11 @@ public class ToneNodeFactory {
     /**
      * Returns an {@link ToneWhileNode} for the given parameters.
      *
-     * @param whileToken The token containing the while node's info
+     * @param whileToken    The token containing the while node's info
      * @param conditionNode The conditional node for this while loop
-     * @param bodyNode The body of the while loop
+     * @param bodyNode      The body of the while loop
      * @return A ToneWhileNode built using the given parameters. null if either conditionNode or
-     *         bodyNode is null.
+     * bodyNode is null.
      */
     public ToneStatementNode createWhile(Token whileToken, ToneExpressionNode conditionNode, ToneStatementNode bodyNode) {
         if (conditionNode == null || bodyNode == null) {
@@ -245,11 +246,11 @@ public class ToneNodeFactory {
     /**
      * Returns an {@link ToneIfNode} for the given parameters.
      *
-     * @param ifToken The token containing the if node's info
+     * @param ifToken       The token containing the if node's info
      * @param conditionNode The condition node of this if statement
-     * @param thenPartNode The then part of the if
+     * @param thenPartNode  The then part of the if
      * @return An ToneIfNode for the given parameters. null if either conditionNode or thenPartNode is
-     *         null.
+     * null.
      */
     public ToneStatementNode createIf(Token ifToken, ToneExpressionNode conditionNode, ToneStatementNode thenPartNode) {
         if (conditionNode == null || thenPartNode == null) {
@@ -267,7 +268,7 @@ public class ToneNodeFactory {
     /**
      * Returns an {@link ToneReturnNode} for the given parameters.
      *
-     * @param t The token containing the return node's info
+     * @param t         The token containing the return node's info
      * @param valueNode The value of the return (null if not returning a value)
      * @return An ToneReturnNode for the given parameters.
      */
@@ -283,11 +284,11 @@ public class ToneNodeFactory {
      * Returns the corresponding subclass of {@link ToneExpressionNode} for binary expressions. </br>
      * These nodes are currently not instrumented.
      *
-     * @param opToken The operator of the binary expression
-     * @param leftNode The left node of the expression
+     * @param opToken   The operator of the binary expression
+     * @param leftNode  The left node of the expression
      * @param rightNode The right node of the expression
      * @return A subclass of ToneExpressionNode using the given parameters based on the given opToken.
-     *         null if either leftNode or rightNode is null.
+     * null if either leftNode or rightNode is null.
      */
     public ToneExpressionNode createBinary(Token opToken, ToneExpressionNode leftNode, ToneExpressionNode rightNode) {
         if (leftNode == null || rightNode == null) {
@@ -362,11 +363,11 @@ public class ToneNodeFactory {
     /**
      * Returns an {@link ToneInvokeNode} for the given parameters.
      *
-     * @param functionNode The function being called
+     * @param functionNode   The function being called
      * @param parameterNodes The parameters of the function call
-     * @param finalToken A token used to determine the end of the sourceSelection for this call
+     * @param finalToken     A token used to determine the end of the sourceSelection for this call
      * @return An ToneInvokeNode for the given parameters. null if functionNode or any of the
-     *         parameterNodes are null.
+     * parameterNodes are null.
      */
     public ToneExpressionNode createCall(ToneExpressionNode functionNode, List<ToneExpressionNode> parameterNodes, Token finalToken) {
         if (functionNode == null || containsNull(parameterNodes)) {
@@ -384,9 +385,42 @@ public class ToneNodeFactory {
     }
 
     /**
+     * Write value
+     *
+     * @param printToken name of method
+     * @param parameter  parameter to write out
+     * @return statement to write
+     */
+    public ToneStatementNode createPrint(Token printToken, ToneExpressionNode parameter) {
+        final TonePrintBuiltin result = TonePrintBuiltinNodeGen.create(parameter);
+        final int startPos = printToken.getStartIndex();
+        result.setSourceSection(startPos, parameter.getSourceEndIndex() - startPos);
+        result.addExpressionTag();
+        return result;
+    }
+
+    /**
+     * Read value
+     *
+     * @param readToken      name of method
+     * @param nameOfVariable save read value to this variable name
+     * @return expression to write local variable
+     */
+    public ToneStatementNode createRead(Token readToken, Token nameOfVariable) {
+        FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(nameOfVariable.getText(), null, FrameSlotKind.Illegal);
+        lexicalScope.locals.put(nameOfVariable.getText(), frameSlot);
+        ToneReadBuiltin toneReadBuiltin = ToneReadBuiltinNodeGen.create();
+        final ToneWriteLocalVariableNode result = ToneWriteLocalVariableNodeGen.create(toneReadBuiltin, frameSlot);
+
+        result.setSourceSection(readToken.getStartIndex(), nameOfVariable.getStopIndex() - readToken.getStartIndex() + 1);
+        result.addExpressionTag();
+        return result;
+    }
+
+    /**
      * Returns an {@link ToneWriteLocalVariableNode} for the given parameters.
      *
-     * @param nameNode The name of the variable being assigned
+     * @param nameNode  The name of the variable being assigned
      * @param valueNode The value to be assigned
      * @return An ToneExpressionNode for the given parameters. null if nameNode or valueNode is null.
      */
@@ -397,8 +431,8 @@ public class ToneNodeFactory {
     /**
      * Returns an {@link ToneWriteLocalVariableNode} for the given parameters.
      *
-     * @param nameNode The name of the variable being assigned
-     * @param valueNode The value to be assigned
+     * @param nameNode      The name of the variable being assigned
+     * @param valueNode     The value to be assigned
      * @param argumentIndex null or index of the argument the assignment is assigning
      * @return An ToneExpressionNode for the given parameters. null if nameNode or valueNode is null.
      */
@@ -432,11 +466,11 @@ public class ToneNodeFactory {
      *
      * @param nameNode The name of the variable/function being read
      * @return either:
-     *         <ul>
-     *         <li>A ToneReadLocalVariableNode representing the local variable being read.</li>
-     *         <li>A ToneFunctionLiteralNode representing the function definition.</li>
-     *         <li>null if nameNode is null.</li>
-     *         </ul>
+     * <ul>
+     * <li>A ToneReadLocalVariableNode representing the local variable being read.</li>
+     * <li>A ToneFunctionLiteralNode representing the function definition.</li>
+     * <li>null if nameNode is null.</li>
+     * </ul>
      */
     public ToneExpressionNode createRead(ToneExpressionNode nameNode) {
         if (nameNode == null) {
@@ -514,9 +548,9 @@ public class ToneNodeFactory {
      * Returns an {@link ToneReadPropertyNode} for the given parameters.
      *
      * @param receiverNode The receiver of the property access
-     * @param nameNode The name of the property being accessed
+     * @param nameNode     The name of the property being accessed
      * @return An ToneExpressionNode for the given parameters. null if receiverNode or nameNode is
-     *         null.
+     * null.
      */
     public ToneExpressionNode createReadProperty(ToneExpressionNode receiverNode, ToneExpressionNode nameNode) {
         if (receiverNode == null || nameNode == null) {
@@ -537,10 +571,10 @@ public class ToneNodeFactory {
      * Returns an {@link ToneWritePropertyNode} for the given parameters.
      *
      * @param receiverNode The receiver object of the property assignment
-     * @param nameNode The name of the property being assigned
-     * @param valueNode The value to be assigned
+     * @param nameNode     The name of the property being assigned
+     * @param valueNode    The value to be assigned
      * @return An ToneExpressionNode for the given parameters. null if receiverNode, nameNode or
-     *         valueNode is null.
+     * valueNode is null.
      */
     public ToneExpressionNode createWriteProperty(ToneExpressionNode receiverNode, ToneExpressionNode nameNode, ToneExpressionNode valueNode) {
         if (receiverNode == null || nameNode == null || valueNode == null) {

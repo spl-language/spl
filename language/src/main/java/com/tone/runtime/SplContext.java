@@ -18,9 +18,8 @@ import com.oracle.truffle.api.object.Shape;
 import com.oracle.truffle.api.source.Source;
 import com.tone.SplLanguage;
 import com.tone.builtins.ToneBuiltinNode;
-import com.tone.builtins.TonePrintLnBuiltin;
-import com.tone.builtins.TonePrintLnBuiltinFactory;
-import com.tone.builtins.ToneReadLnBuiltin;
+import com.tone.builtins.TonePrintBuiltin;
+import com.tone.builtins.ToneReadBuiltin;
 import com.tone.nodes.ToneExpressionNode;
 import com.tone.nodes.ToneRootNode;
 import com.tone.nodes.local.ToneReadArgumentNode;
@@ -76,7 +75,7 @@ public final class SplContext {
     }
 
     /**
-     * Returns the default input, i.e., the source for the {@link ToneReadLnBuiltin}. To allow unit
+     * Returns the default input, i.e., the source for the {@link ToneReadBuiltin}. To allow unit
      * testing, we do not use {@link System#in} directly.
      */
     public BufferedReader getInput() {
@@ -84,7 +83,7 @@ public final class SplContext {
     }
 
     /**
-     * The default default, i.e., the output for the {@link TonePrintLnBuiltin}. To allow unit
+     * The default default, i.e., the output for the {@link TonePrintBuiltin}. To allow unit
      * testing, we do not use {@link System#out} directly.
      */
     public PrintWriter getOutput() {
@@ -107,8 +106,6 @@ public final class SplContext {
      * {@link ToneBuiltinNode builtin implementation classes}.
      */
     private void installBuiltins() {
-//        installBuiltin(ToneReadlnBuiltinFactory.getInstance());
-        installBuiltin(TonePrintLnBuiltinFactory.getInstance());
 //        installBuiltin(ToneNanoTimeBuiltinFactory.getInstance());
 //        installBuiltin(ToneDefineFunctionBuiltinFactory.getInstance());
 //        installBuiltin(ToneStackTraceBuiltinFactory.getInstance());

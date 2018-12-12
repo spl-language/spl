@@ -97,8 +97,9 @@ block [boolean inLoop] returns [ToneStatementNode result]
                                                   List<ToneStatementNode> body = new ArrayList<>(); }
 s='begin'
 (
-    statement[inLoop]                           { body.add($statement.result); }
+    statement[inLoop]';'                        { body.add($statement.result); }
 )*
+    statement[inLoop]                           { body.add($statement.result); }
 e='end'
                                                 { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 ;
@@ -113,10 +114,15 @@ statement [boolean inLoop] returns [ToneStatementNode result]
 |
     return_statement                            { $result = $return_statement.result; }
 |
-    expression ';'                              { $result = $expression.result; }
+    expression                                  { $result = $expression.result; }
 |
     d='debugger'                                { $result = factory.createDebugger($d); }
-    ';'
+|
+    id='print'
+    expression                                  { $result = factory.createPrint($id, $expression.result); }
+|
+    id='read'
+    IDENTIFIER                                  { $result = factory.createRead($id, $IDENTIFIER); }
 )
 ;
 

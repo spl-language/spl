@@ -1,4 +1,6 @@
-main ()
+main()
 begin
-    println("hi");
+    read x;
+    res = 3 + x;
+    print x
 end
