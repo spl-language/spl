@@ -11,7 +11,8 @@ begin
     int z;
     z= 1;
     while b do
-        if b % 2 then z = z * a end;
+
+        if b % 2 != 0 && 3 > 2 then z = z * a end;
         a = a * a;
         b = b / 2
     end;

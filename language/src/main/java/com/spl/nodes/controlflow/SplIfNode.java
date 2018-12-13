@@ -5,6 +5,7 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.ConditionProfile;
+import com.spl.exceptions.SplException;
 import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.SplStatementNode;
@@ -45,18 +46,19 @@ public final class SplIfNode extends SplStatementNode {
     }
 
     private boolean evaluateCondition(VirtualFrame frame) {
-        try {
-            /*
-             * The condition must evaluate to a boolean value, so we call the boolean-specialized
-             * execute method.
-             */
-            return conditionNode.executeLong(frame) > 0;
-        } catch (UnexpectedResultException ex) {
-            /*
-             * The condition evaluated to a non-boolean result. This is a type error in the Tone
-             * program.
-             */
-            throw SplTypeErrorException.typeError(this, ex.getResult());
+        boolean cond;
+        /*
+         * The condition must evaluate to a boolean value, so we call the boolean-specialized
+         * execute method.
+         */
+        Object obj = conditionNode.executeGeneric(frame);
+        if (obj instanceof Boolean) {
+            cond = (boolean) obj;
+        } else if (obj instanceof Long){
+            cond = ((long) obj) > 0;
+        } else {
+            throw new SplException("Bad condition type for if statement");
         }
+        return cond;
     }
 }
