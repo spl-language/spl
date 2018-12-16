@@ -247,15 +247,15 @@ term                                            { $result = $term.result; }
 
 term returns [SplExpressionNode result]
 :
-factor                                          { $result = $factor.result; }
+fact                                            { $result = $fact.result; }
 (
     op=('*' | '/' | '%')
-    factor                                      { $result = factory.createBinary($op, $result, $factor.result); }
+    fact                                        { $result = factory.createBinary($op, $result, $fact.result); }
 )*
 ;
 
 
-factor returns [SplExpressionNode result]
+fact returns [SplExpressionNode result]
 :
 (
     IDEN                                        { SplExpressionNode assignmentName = factory.createStringLiteral($IDEN, false); }

@@ -43,12 +43,12 @@ public class SplParser extends Parser {
 		RULE_spl = 0, RULE_dfunc = 1, RULE_body = 2, RULE_statement = 3, RULE_dvarb = 4, 
 		RULE_dconst = 5, RULE_while_statement = 6, RULE_while_block = 7, RULE_if_statement = 8, 
 		RULE_if_block = 9, RULE_return_statement = 10, RULE_expr = 11, RULE_logic_term = 12, 
-		RULE_logic_factor = 13, RULE_arithmetic = 14, RULE_term = 15, RULE_factor = 16, 
+		RULE_logic_factor = 13, RULE_arithmetic = 14, RULE_term = 15, RULE_fact = 16, 
 		RULE_member_expression = 17;
 	public static final String[] ruleNames = {
 		"spl", "dfunc", "body", "statement", "dvarb", "dconst", "while_statement", 
 		"while_block", "if_statement", "if_block", "return_statement", "expr", 
-		"logic_term", "logic_factor", "arithmetic", "term", "factor", "member_expression"
+		"logic_term", "logic_factor", "arithmetic", "term", "fact", "member_expression"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -1126,13 +1126,13 @@ public class SplParser extends Parser {
 
 	public static class TermContext extends ParserRuleContext {
 		public SplExpressionNode result;
-		public FactorContext factor;
+		public FactContext fact;
 		public Token op;
-		public List<FactorContext> factor() {
-			return getRuleContexts(FactorContext.class);
+		public List<FactContext> fact() {
+			return getRuleContexts(FactContext.class);
 		}
-		public FactorContext factor(int i) {
-			return getRuleContext(FactorContext.class,i);
+		public FactContext fact(int i) {
+			return getRuleContext(FactContext.class,i);
 		}
 		public TermContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1149,8 +1149,8 @@ public class SplParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(234);
-			((TermContext)_localctx).factor = factor();
-			 ((TermContext)_localctx).result =  ((TermContext)_localctx).factor.result; 
+			((TermContext)_localctx).fact = fact();
+			 ((TermContext)_localctx).result =  ((TermContext)_localctx).fact.result; 
 			setState(242);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
@@ -1170,8 +1170,8 @@ public class SplParser extends Parser {
 						consume();
 					}
 					setState(237);
-					((TermContext)_localctx).factor = factor();
-					 ((TermContext)_localctx).result =  factory.createBinary(((TermContext)_localctx).op, _localctx.result, ((TermContext)_localctx).factor.result); 
+					((TermContext)_localctx).fact = fact();
+					 ((TermContext)_localctx).result =  factory.createBinary(((TermContext)_localctx).op, _localctx.result, ((TermContext)_localctx).fact.result); 
 					}
 					} 
 				}
@@ -1192,7 +1192,7 @@ public class SplParser extends Parser {
 		return _localctx;
 	}
 
-	public static class FactorContext extends ParserRuleContext {
+	public static class FactContext extends ParserRuleContext {
 		public SplExpressionNode result;
 		public Token IDEN;
 		public Member_expressionContext member_expression;
@@ -1211,15 +1211,15 @@ public class SplParser extends Parser {
 		public Member_expressionContext member_expression() {
 			return getRuleContext(Member_expressionContext.class,0);
 		}
-		public FactorContext(ParserRuleContext parent, int invokingState) {
+		public FactContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_factor; }
+		@Override public int getRuleIndex() { return RULE_fact; }
 	}
 
-	public final FactorContext factor() throws RecognitionException {
-		FactorContext _localctx = new FactorContext(_ctx, getState());
-		enterRule(_localctx, 32, RULE_factor);
+	public final FactContext fact() throws RecognitionException {
+		FactContext _localctx = new FactContext(_ctx, getState());
+		enterRule(_localctx, 32, RULE_fact);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1230,21 +1230,21 @@ public class SplParser extends Parser {
 			case IDEN:
 				{
 				setState(245);
-				((FactorContext)_localctx).IDEN = match(IDEN);
-				 SplExpressionNode assignmentName = factory.createStringLiteral(((FactorContext)_localctx).IDEN, false); 
+				((FactContext)_localctx).IDEN = match(IDEN);
+				 SplExpressionNode assignmentName = factory.createStringLiteral(((FactContext)_localctx).IDEN, false); 
 				setState(251);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,15,_ctx) ) {
 				case 1:
 					{
 					setState(247);
-					((FactorContext)_localctx).member_expression = member_expression(null, null, assignmentName);
-					 ((FactorContext)_localctx).result =  ((FactorContext)_localctx).member_expression.result; 
+					((FactContext)_localctx).member_expression = member_expression(null, null, assignmentName);
+					 ((FactContext)_localctx).result =  ((FactContext)_localctx).member_expression.result; 
 					}
 					break;
 				case 2:
 					{
-					 ((FactorContext)_localctx).result =  factory.createRead(assignmentName); 
+					 ((FactContext)_localctx).result =  factory.createRead(assignmentName); 
 					}
 					break;
 				}
@@ -1253,8 +1253,8 @@ public class SplParser extends Parser {
 			case STRING_LITERAL:
 				{
 				setState(253);
-				((FactorContext)_localctx).STRING_LITERAL = match(STRING_LITERAL);
-				 ((FactorContext)_localctx).result =  factory.createStringLiteral(((FactorContext)_localctx).STRING_LITERAL, true); 
+				((FactContext)_localctx).STRING_LITERAL = match(STRING_LITERAL);
+				 ((FactContext)_localctx).result =  factory.createStringLiteral(((FactContext)_localctx).STRING_LITERAL, true); 
 				}
 				break;
 			case T__24:
@@ -1267,10 +1267,10 @@ public class SplParser extends Parser {
 				if (_la==T__24 || _la==T__25) {
 					{
 					setState(255);
-					((FactorContext)_localctx).sign = _input.LT(1);
+					((FactContext)_localctx).sign = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__24 || _la==T__25) ) {
-						((FactorContext)_localctx).sign = (Token)_errHandler.recoverInline(this);
+						((FactContext)_localctx).sign = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -1281,19 +1281,19 @@ public class SplParser extends Parser {
 				}
 
 				setState(258);
-				((FactorContext)_localctx).NUMERIC_LITERAL = match(NUMERIC_LITERAL);
-				 ((FactorContext)_localctx).result =  factory.createNumericLiteral(((FactorContext)_localctx).sign, ((FactorContext)_localctx).NUMERIC_LITERAL); 
+				((FactContext)_localctx).NUMERIC_LITERAL = match(NUMERIC_LITERAL);
+				 ((FactContext)_localctx).result =  factory.createNumericLiteral(((FactContext)_localctx).sign, ((FactContext)_localctx).NUMERIC_LITERAL); 
 				}
 				break;
 			case T__0:
 				{
 				setState(260);
-				((FactorContext)_localctx).s = match(T__0);
+				((FactContext)_localctx).s = match(T__0);
 				setState(261);
-				((FactorContext)_localctx).ex = expr();
+				((FactContext)_localctx).ex = expr();
 				setState(262);
-				((FactorContext)_localctx).e = match(T__2);
-				 ((FactorContext)_localctx).result =  factory.createParenExpression(((FactorContext)_localctx).ex.result, ((FactorContext)_localctx).s.getStartIndex(), ((FactorContext)_localctx).e.getStopIndex() - ((FactorContext)_localctx).s.getStartIndex() + 1); 
+				((FactContext)_localctx).e = match(T__2);
+				 ((FactContext)_localctx).result =  factory.createParenExpression(((FactContext)_localctx).ex.result, ((FactContext)_localctx).s.getStartIndex(), ((FactContext)_localctx).e.getStopIndex() - ((FactContext)_localctx).s.getStartIndex() + 1); 
 				}
 				break;
 			default:
