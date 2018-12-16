@@ -13,8 +13,8 @@ import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.interop.ToneForeignToToneTypeNode;
 import com.spl.nodes.runtime.SplNull;
-import com.spl.runtime.ToneBigNumber;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplBigNumber;
+import com.spl.runtime.SplFunction;
 
 @NodeChild("child")
 public abstract class SplUnboxNode extends SplExpressionNode {
@@ -25,7 +25,7 @@ public abstract class SplUnboxNode extends SplExpressionNode {
     }
 
     @Specialization
-    protected ToneBigNumber unboxBigNumber(ToneBigNumber value) {
+    protected SplBigNumber unboxBigNumber(SplBigNumber value) {
         return value;
     }
 
@@ -40,7 +40,7 @@ public abstract class SplUnboxNode extends SplExpressionNode {
     }
 
     @Specialization
-    protected ToneFunction unboxFunction(ToneFunction value) {
+    protected SplFunction unboxFunction(SplFunction value) {
         return value;
     }
 

@@ -31,22 +31,22 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The run-time state of Tone during execution. The context is created by the {@link SplLanguage}. It
- * is used, for example, by {@link SplBuiltinNode#getContext() builtin functions}.
- * <p>
- * It would be an error to have two different context instances during the execution of one script.
- * However, if two separate scripts run in one Java VM at the same time, they have a different
- * context. Therefore, the context is not a singleton.
+ * Використовується під час виконання. Контекст створено {@link SplLanguage}.
+ *  * Використовується, наприклад, за допомогою вбудованих функцій {@link SplBuiltinNode # getContext ().
+ *   * <p>
+ *   * Було б помилкою мати два різних контексту при виконанні одного сценарію.
+ *   * Однак, якщо два окремих скрипти одночасно запускаються в одній версії Java, вони мають інший
+ *   * контекст Тому контекст не є синглтон.
  */
 public final class SplContext {
 
-    private static final Source BUILTIN_SOURCE = Source.newBuilder(SplLanguage.ID, "", "Tone builtin").build();
+    private static final Source BUILTIN_SOURCE = Source.newBuilder(SplLanguage.ID, "", "SPl builtin").build();
     private static final Layout LAYOUT = Layout.createLayout();
 
     private final Env env;
     private final BufferedReader input;
     private final PrintWriter output;
-    private final ToneFunctionRegistry functionRegistry;
+    private final SplFunctionRegistry functionRegistry;
     private final Shape emptyShape;
     private final SplLanguage language;
     private final AllocationReporter allocationReporter;
@@ -58,42 +58,44 @@ public final class SplContext {
         this.output = new PrintWriter(env.out(), true);
         this.language = language;
         this.allocationReporter = env.lookup(AllocationReporter.class);
-        this.functionRegistry = new ToneFunctionRegistry(language);
+        this.functionRegistry = new SplFunctionRegistry(language);
         this.topScopes = Collections.singleton(Scope.newBuilder("global", functionRegistry.getFunctionsObject()).build());
         installBuiltins();
         for (NodeFactory<? extends SplBuiltinNode> builtin : externalBuiltins) {
             installBuiltin(builtin);
         }
-        this.emptyShape = LAYOUT.createShape(ToneObjectType.SINGLETON);
+        this.emptyShape = LAYOUT.createShape(SplObjectType.SINGLETON);
     }
 
     /**
-     * Return the current Truffle environment.
+     * Повернути поточне середовище Трюфеля.
      */
     public Env getEnv() {
         return env;
     }
 
     /**
-     * Returns the default input, i.e., the source for the {@link SplReadBuiltin}. To allow unit
-     * testing, we do not use {@link System#in} directly.
+     * Повертає вхід за умовчанням (потік звідки буде зчитуватись дані користувача, по замовчуваню використовуєм косоль),
+     * тобто джерело для {@link SplReadBuiltin}. Щоб дозволити блок
+     * тестування, ми не використовуємо {@link System#in} безпосередньо, бо для тестів необхідно зчитувати дані з файла.
      */
     public BufferedReader getInput() {
         return input;
     }
 
     /**
-     * The default default, i.e., the output for the {@link SplPrintBuiltin}. To allow unit
-     * testing, we do not use {@link System#out} directly.
+     * Повертає вихід за умовчанням (потік куди записуватись дані, по замовчуваню використовуєм косоль),
+     * тобто вихід для {@link SplPrintBuiltin}. Щоб дозволити блок
+     * тестування, ми не використовуємо {@link System#out} безпосередньо, бо для тестів необхідно зчитувати дані з файла.
      */
     public PrintWriter getOutput() {
         return output;
     }
 
     /**
-     * Returns the registry of all functions that are currently defined.
+     * Повертає регістр усіх функцій
      */
-    public ToneFunctionRegistry getFunctionRegistry() {
+    public SplFunctionRegistry getFunctionRegistry() {
         return functionRegistry;
     }
 
@@ -102,49 +104,45 @@ public final class SplContext {
     }
 
     /**
-     * Adds all builtin functions to the {@link ToneFunctionRegistry}. This method lists all
-     * {@link SplBuiltinNode builtin implementation classes}.
+     * Додає всі вбудовані функції до {@link SplFunctionRegistry}. Цей метод перераховує всі
+     * {@link SplBuiltinNode вбудовані класи реалізації}.
+     * Зараз немає вбудованих функцій, могло би бути функції print, read якби не мали спеціального синтаксису для виклику (замість дужок використовється просто прбіл).
      */
     private void installBuiltins() {
-//        installBuiltin(ToneStackTraceBuiltinFactory.getInstance());
-//        installBuiltin(ToneHelloEqualsWorldBuiltinFactory.getInstance());
-//        installBuiltin(ToneNewObjectBuiltinFactory.getInstance());
-//        installBuiltin(ToneEvalBuiltinFactory.getInstance());
-//        installBuiltin(ToneImportBuiltinFactory.getInstance());
-//        installBuiltin(ToneGetSizeBuiltinFactory.getInstance());
-//        installBuiltin(ToneHasSizeBuiltinFactory.getInstance());
-//        installBuiltin(ToneIsExecutableBuiltinFactory.getInstance());
-//        installBuiltin(ToneIsNullBuiltinFactory.getInstance());
     }
 
     public void installBuiltin(NodeFactory<? extends SplBuiltinNode> factory) {
+
         /*
-         * The builtin node factory is a class that is automatically generated by the Truffle DSL.
-         * The signature returned by the factory reflects the signature of the @Specialization
-         *
-         * methods in the builtin classes.
+         * Фабрика вбудованих вузлів - це клас, який автоматично генерується Трюфельним DSL.
+         * Підпис, повернений фабрикою, відображає підпис @Specialization
+         *
+         * методи у вбудованих класах.
          */
         int argumentCount = factory.getExecutionSignature().size();
         SplExpressionNode[] argumentNodes = new SplExpressionNode[argumentCount];
+
         /*
-         * Builtin functions are like normal functions, i.e., the arguments are passed in as an
-         * Object[] array encapsulated in ToneArguments. A SplReadArgumentNode extracts a parameter
-         * from this array.
+         * Builtin функції, як звичайні функції, тобто аргументи передаються як
+         * Object[] масив інкапсульовано в SplArguments. SplReadArgumentNode вилучає параметр
+         * з цього масиву.
          */
         for (int i = 0; i < argumentCount; i++) {
             argumentNodes[i] = new SplReadArgumentNode(i);
         }
-        /* Instantiate the builtin node. This node performs the actual functionality. */
+
+        /* Інстантируйте вбудований вузол. Цей вузол виконує фактичну функціональність. */
         SplBuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
         builtinBodyNode.addRootTag();
-        /* The name of the builtin function is specified via an annotation on the node class. */
+
+        /* Назва вбудованої функції вказується через анотацію в класі вузлів. */
         String name = lookupNodeInfo(builtinBodyNode.getClass()).shortName();
         builtinBodyNode.setUnavailableSourceSection();
 
-        /* Wrap the builtin in a RootNode. Truffle requires all AST to start with a RootNode. */
+        /* Обертає вбудований в RootNode. Трюфель вимагає, щоб всі AST почали з RootNode. Тобто деякий батьківський вузло для всіх*/
         SplRootNode rootNode = new SplRootNode(language, new FrameDescriptor(), builtinBodyNode, BUILTIN_SOURCE.createUnavailableSection(), name);
 
-        /* Register the builtin function in our function registry. */
+        /* Реєструється вбудована функцію в нашому реєстрі функцій. */
         getFunctionRegistry().register(name, Truffle.getRuntime().createCallTarget(rootNode));
     }
 
@@ -161,16 +159,15 @@ public final class SplContext {
     }
 
     /*
-     * Methods for object creation / object property access.
+     * Методи створення об'єкта / доступ до ресурсу об'єкта.
      */
-
     public AllocationReporter getAllocationReporter() {
         return allocationReporter;
     }
 
     /**
-     * Allocate an empty object. All new objects initially have no properties. Properties are added
-     * when they are first stored, i.e., the store triggers a shape change of the object.
+     * Виділити порожній об'єкт. Всі нові об'єкти спочатку не мають властивостей. Властивості додані
+     * коли вони вперше зберігаються, тобто магазин запускає зміну форми об'єкта.
      */
     public DynamicObject createObject() {
         DynamicObject object = null;
@@ -180,20 +177,19 @@ public final class SplContext {
         return object;
     }
 
-    public static boolean isToneObject(TruffleObject value) {
-        /*
-         * LAYOUT.getType() returns a concrete implementation class, i.e., a class that is more
-         * precise than the base class DynamicObject. This makes the type check faster.
+    public static boolean isSplObject(TruffleObject value) {
+
+        /** LAYOUT.getType () повертає конкретний клас реалізації, тобто клас, який більше
+         * точніше, ніж базовий клас DynamicObject. Це робить перевірку типу швидше.
          */
-        return LAYOUT.getType().isInstance(value) && LAYOUT.getType().cast(value).getShape().getObjectType() == ToneObjectType.SINGLETON;
+        return LAYOUT.getType().isInstance(value) && LAYOUT.getType().cast(value).getShape().getObjectType() == SplObjectType.SINGLETON;
     }
 
     /*
-     * Methods for language interoperability.
+     * Методи мовної сумісності. Містить ті типи які має відповідно мова Spl.
      */
-
     public static Object fromForeignValue(Object a) {
-        if (a instanceof Long || a instanceof ToneBigNumber || a instanceof String || a instanceof Boolean) {
+        if (a instanceof Long || a instanceof SplBigNumber || a instanceof String || a instanceof Boolean) {
             return a;
         } else if (a instanceof Character) {
             return String.valueOf(a);
@@ -218,8 +214,8 @@ public final class SplContext {
     }
 
     /**
-     * Returns an object that contains bindings that were exported across all used languages. To
-     * read or write from this object the {@link TruffleObject interop} API can be used.
+     * Повертає об'єкт, який містить прив'язки, які були експортовані на всі використовувані мови. До
+     * читати чи писати з цього об'єкта можна використовувати API {@link TruffleObject interop}.
      */
     public TruffleObject getPolyglotBindings() {
         return (TruffleObject) env.getPolyglotBindings();

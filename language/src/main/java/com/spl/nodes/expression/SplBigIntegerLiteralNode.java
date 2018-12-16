@@ -4,7 +4,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.literal.SplLongLiteralNode;
-import com.spl.runtime.ToneBigNumber;
+import com.spl.runtime.SplBigNumber;
 
 import java.math.BigInteger;
 
@@ -15,14 +15,14 @@ import java.math.BigInteger;
 @NodeInfo(shortName = "const")
 public final class SplBigIntegerLiteralNode extends SplExpressionNode {
 
-    private final ToneBigNumber value;
+    private final SplBigNumber value;
 
     public SplBigIntegerLiteralNode(BigInteger value) {
-        this.value = new ToneBigNumber(value);
+        this.value = new SplBigNumber(value);
     }
 
     @Override
-    public ToneBigNumber executeGeneric(VirtualFrame frame) {
+    public SplBigNumber executeGeneric(VirtualFrame frame) {
         return value;
     }
 }

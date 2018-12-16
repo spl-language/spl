@@ -9,14 +9,14 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.SplLanguage;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.runtime.SplContext;
-import com.spl.runtime.ToneFunction;
-import com.spl.runtime.ToneFunctionRegistry;
+import com.spl.runtime.SplFunction;
+import com.spl.runtime.SplFunctionRegistry;
 
 /**
- * Constant literal for a {@link ToneFunction function} value, created when a function name occurs as
+ * Constant literal for a {@link SplFunction function} value, created when a function name occurs as
  * a literal in Tone source code. Note that function redefinition can change the {@link CallTarget
- * call target} that is executed when calling the function, but the {@link ToneFunction} for a name
- * never changes. This is guaranteed by the {@link ToneFunctionRegistry}.
+ * call target} that is executed when calling the function, but the {@link SplFunction} for a name
+ * never changes. This is guaranteed by the {@link SplFunctionRegistry}.
  */
 @NodeInfo(shortName = "func")
 public final class SplFunctionLiteralNode extends SplExpressionNode {
@@ -31,7 +31,7 @@ public final class SplFunctionLiteralNode extends SplExpressionNode {
      * be constant folded during compilation.
      */
     @CompilationFinal
-    private ToneFunction cachedFunction;
+    private SplFunction cachedFunction;
 
     private final ContextReference<SplContext> reference;
 
@@ -41,7 +41,7 @@ public final class SplFunctionLiteralNode extends SplExpressionNode {
     }
 
     @Override
-    public ToneFunction executeGeneric(VirtualFrame frame) {
+    public SplFunction executeGeneric(VirtualFrame frame) {
         if (cachedFunction == null) {
             /* We are about to change a @CompilationFinal field. */
             CompilerDirectives.transferToInterpreterAndInvalidate();

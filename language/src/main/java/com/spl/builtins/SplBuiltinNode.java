@@ -9,14 +9,14 @@ import com.spl.SplLanguage;
 import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.runtime.SplContext;
-import com.spl.runtime.ToneFunctionRegistry;
+import com.spl.runtime.SplFunctionRegistry;
 
 /**
  * Base class for all builtin functions. It contains the Truffle DSL annotation {@link NodeChild}
  * that defines the function arguments.<br>
  * The builtin functions are registered in {@link SplContext#installBuiltins}. Every builtin node
  * subclass is instantiated there, wrapped into a function, and added to the
- * {@link ToneFunctionRegistry}. This ensures that builtin functions can be called like user-defined
+ * {@link SplFunctionRegistry}. This ensures that builtin functions can be called like user-defined
  * functions; there is no special function lookup or call node for builtin functions.
  */
 @NodeChild(value = "arguments", type = SplExpressionNode[].class)

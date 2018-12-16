@@ -4,10 +4,10 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.spl.SplLanguage;
 import com.spl.nodes.runtime.SplUndefinedNameTypeErrorException;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplFunction;
 
 /**
- * The initial {@link RootNode} of {@link ToneFunction functions} when they are created, i.e., when
+ * The initial {@link RootNode} of {@link SplFunction functions} when they are created, i.e., when
  * they are still undefined. Executing it throws an
  * {@link SplUndefinedNameTypeErrorException#undefinedFunction exception}.
  */

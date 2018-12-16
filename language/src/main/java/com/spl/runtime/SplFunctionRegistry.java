@@ -14,37 +14,37 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Manages the mapping from function names to {@link ToneFunction function objects}.
+ * Manages the mapping from function names to {@link SplFunction function objects}.
  */
-public final class ToneFunctionRegistry {
+public final class SplFunctionRegistry {
 
     private final SplLanguage language;
     private final FunctionsObject functionsObject = new FunctionsObject();
 
-    public ToneFunctionRegistry(SplLanguage language) {
+    public SplFunctionRegistry(SplLanguage language) {
         this.language = language;
     }
 
     /**
-     * Returns the canonical {@link ToneFunction} object for the given name. If it does not exist yet,
+     * Returns the canonical {@link SplFunction} object for the given name. If it does not exist yet,
      * it is created.
      */
-    public ToneFunction lookup(String name, boolean createIfNotPresent) {
-        ToneFunction result = functionsObject.functions.get(name);
+    public SplFunction lookup(String name, boolean createIfNotPresent) {
+        SplFunction result = functionsObject.functions.get(name);
         if (result == null && createIfNotPresent) {
-            result = new ToneFunction(language, name);
+            result = new SplFunction(language, name);
             functionsObject.functions.put(name, result);
         }
         return result;
     }
 
     /**
-     * Associates the {@link ToneFunction} with the given name with the given implementation root
+     * Associates the {@link SplFunction} with the given name with the given implementation root
      * node. If the function did not exist before, it defines the function. If the function existed
      * before, it redefines the function and the old implementation is discarded.
      */
-    public ToneFunction register(String name, RootCallTarget callTarget) {
-        ToneFunction function = lookup(name, true);
+    public SplFunction register(String name, RootCallTarget callTarget) {
+        SplFunction function = lookup(name, true);
         function.setCallTarget(callTarget);
         return function;
     }
@@ -59,17 +59,17 @@ public final class ToneFunctionRegistry {
         register(SplParser.parseSpl(language, newFunctions));
     }
 
-    public ToneFunction getFunction(String name) {
+    public SplFunction getFunction(String name) {
         return functionsObject.functions.get(name);
     }
 
     /**
      * Returns the sorted list of all functions, for printing purposes only.
      */
-    public List<ToneFunction> getFunctions() {
-        List<ToneFunction> result = new ArrayList<>(functionsObject.functions.values());
-        Collections.sort(result, new Comparator<ToneFunction>() {
-            public int compare(ToneFunction f1, ToneFunction f2) {
+    public List<SplFunction> getFunctions() {
+        List<SplFunction> result = new ArrayList<>(functionsObject.functions.values());
+        Collections.sort(result, new Comparator<SplFunction>() {
+            public int compare(SplFunction f1, SplFunction f2) {
                 return f1.toString().compareTo(f2.toString());
             }
         });

@@ -67,9 +67,9 @@ import java.util.Map;
 public class SplNodeFactory {
 
     /**
-     * Local variable names that are visible in the current block. Variables are not visible outside
-     * of their defining block, to prevent the usage of undefined variables. Because of that, we can
-     * decide during parsing if a name references a local variable or is a function name.
+     * Локальні імена зміних, видимі в поточному блоці. Змінні не видно за межами
+     * їх визначального блоку, щоб запобігти використанню невизначених змінних. Через це ми можемо
+     * вирішіти під час синтаксичного аналізу, якщо ім'я посилається на локальну змінну або це ім'я функції.
      */
     static class LexicalScope {
         protected final LexicalScope outer;
@@ -84,12 +84,13 @@ public class SplNodeFactory {
         }
     }
 
-    /* State while parsing a source unit. */
+    /**
+     * Містить джерело з якого зчитуємо код Spl
+     */
     private final Source source;
     private final Map<String, RootCallTarget> allFunctions;
     private final List<RootCallTarget> statements;
 
-    /* State while parsing a function. */
     private int functionStartPos;
     private String functionName;
     private int functionBodyStartPos; // includes parameter list
@@ -97,7 +98,6 @@ public class SplNodeFactory {
     private FrameDescriptor frameDescriptor;
     private List<SplStatementNode> methodNodes;
 
-    /* State while parsing a block. */
     private LexicalScope lexicalScope;
     private final SplLanguage language;
 
@@ -133,10 +133,12 @@ public class SplNodeFactory {
     }
 
     public void addFormalParameter(Token nameToken) {
+
         /*
-         * Method parameters are assigned to local variables at the beginning of the method. This
-         * ensures that accesses to parameters are specialized the same way as local variables are
-         * specialized.
+          * Параметри методу призначаються для локальних змінних на початку методу. Це
+          * забезпечує, що доступ до параметрів спеціалізується так само, як і локальні змінні
+          * спеціалізовані.
+          * Тобто параметри метода це то саме що локальні змінні.
          */
         final SplReadArgumentNode readArg = new SplReadArgumentNode(parameterCount);
         SplExpressionNode assignment = createAssignment(createStringLiteral(nameToken, false), readArg, parameterCount, true);
@@ -146,7 +148,7 @@ public class SplNodeFactory {
 
     public void finishFunction(SplStatementNode bodyNode) {
         if (bodyNode == null) {
-            // a state update that would otherwise be performed by finishBlock
+
             lexicalScope = lexicalScope.outer;
         } else {
             methodNodes.add(bodyNode);
@@ -215,10 +217,10 @@ public class SplNodeFactory {
     }
 
     /**
-     * Returns an {@link SplDebuggerNode} for the given token.
+     * Повертає {@link SplDebuggerNode} для заданого токена.
      *
-     * @param debuggerToken The token containing the debugger node's info.
-     * @return A SplDebuggerNode for the given token.
+     * @param debuggerToken Токен який містить інф. для налагоджування
+     * @return SplDebuggerNode.
      */
     public SplStatementNode createDebugger(Token debuggerToken) {
         final SplDebuggerNode debuggerNode = new SplDebuggerNode();

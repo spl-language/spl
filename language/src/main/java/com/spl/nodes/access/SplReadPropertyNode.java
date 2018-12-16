@@ -32,7 +32,7 @@ import com.spl.runtime.SplContext;
 @ImportStatic({SplContext.class, Message.class})
 public abstract class SplReadPropertyNode extends SplExpressionNode {
 
-    @Specialization(guards = "isToneObject(receiver)")
+    @Specialization(guards = "isSplObject(receiver)")
     protected Object read(DynamicObject receiver, Object name,
                           @Cached("create()") SplReadPropertyCacheNode readNode) {
         /**
@@ -47,7 +47,7 @@ public abstract class SplReadPropertyNode extends SplExpressionNode {
      * Language interoperability: if the receiver object is a foreign value we use Truffle's interop
      * API to access the foreign data.
      */
-    @Specialization(guards = "!isToneObject(receiver)")
+    @Specialization(guards = "!isSplObject(receiver)")
     protected Object readForeign(TruffleObject receiver, Object name,
                                  // The child node to access the foreign object
                                  @Cached("READ.createNode()") Node foreignReadNode,

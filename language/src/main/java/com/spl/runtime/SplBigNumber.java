@@ -9,12 +9,12 @@ import com.oracle.truffle.api.nodes.Node;
 
 import java.math.BigInteger;
 
-@MessageResolution(receiverType = ToneBigNumber.class)
-public final class ToneBigNumber implements TruffleObject, Comparable<ToneBigNumber> {
+@MessageResolution(receiverType = SplBigNumber.class)
+public final class SplBigNumber implements TruffleObject, Comparable<SplBigNumber> {
 
     private final BigInteger value;
 
-    public ToneBigNumber(BigInteger value) {
+    public SplBigNumber(BigInteger value) {
         this.value = value;
     }
 
@@ -23,13 +23,13 @@ public final class ToneBigNumber implements TruffleObject, Comparable<ToneBigNum
     }
 
     @TruffleBoundary
-    public int compareTo(ToneBigNumber o) {
+    public int compareTo(SplBigNumber o) {
         return value.compareTo(o.getValue());
     }
 
     @Override
     public ForeignAccess getForeignAccess() {
-        return ToneBigNumberForeign.ACCESS;
+        return SplBigNumberForeign.ACCESS;
     }
 
     @Override
@@ -41,8 +41,8 @@ public final class ToneBigNumber implements TruffleObject, Comparable<ToneBigNum
     @Override
     @TruffleBoundary
     public boolean equals(Object obj) {
-        if (obj instanceof ToneBigNumber) {
-            return value.equals(((ToneBigNumber) obj).getValue());
+        if (obj instanceof SplBigNumber) {
+            return value.equals(((SplBigNumber) obj).getValue());
         }
         return false;
     }
@@ -53,12 +53,12 @@ public final class ToneBigNumber implements TruffleObject, Comparable<ToneBigNum
     }
 
     static boolean isInstance(TruffleObject obj) {
-        return obj instanceof ToneBigNumber;
+        return obj instanceof SplBigNumber;
     }
 
     @Resolve(message = "UNBOX")
     abstract static class UnboxBigNode extends Node {
-        Object access(ToneBigNumber obj) {
+        Object access(SplBigNumber obj) {
             return obj.value.doubleValue();
         }
     }
@@ -66,7 +66,7 @@ public final class ToneBigNumber implements TruffleObject, Comparable<ToneBigNum
     @Resolve(message = "IS_BOXED")
     abstract static class IsBoxedBigNode extends Node {
         @SuppressWarnings("unused")
-        Object access(ToneBigNumber obj) {
+        Object access(SplBigNumber obj) {
             return true;
         }
     }

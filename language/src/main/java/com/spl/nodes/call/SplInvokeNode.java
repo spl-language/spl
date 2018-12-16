@@ -8,10 +8,10 @@ import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.nodes.SplExpressionNode;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplFunction;
 
 /**
- * The node for function invocation in Tone. Since Tone has first class functions, the {@link ToneFunction
+ * The node for function invocation in Tone. Since Tone has first class functions, the {@link SplFunction
  * target function} can be computed by an arbitrary expression. This node is responsible for
  * evaluating this expression, as well as evaluating the {@link #argumentNodes arguments}. The
  * actual dispatch is then delegated to a chain of {@link SplDispatchNode} that form a polymorphic

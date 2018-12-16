@@ -10,8 +10,8 @@ import com.spl.nodes.SplTypes;
 import com.spl.nodes.expression.SplEqualNode;
 import com.spl.nodes.runtime.SplNull;
 import com.spl.runtime.SplContext;
-import com.spl.runtime.ToneBigNumber;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplBigNumber;
+import com.spl.runtime.SplFunction;
 
 @TypeSystemReference(SplTypes.class)
 public abstract class SplPropertyCacheNode extends Node {
@@ -23,7 +23,7 @@ public abstract class SplPropertyCacheNode extends Node {
 
     protected static Shape lookupShape(DynamicObject receiver) {
         CompilerAsserts.neverPartOfCompilation();
-        assert SplContext.isToneObject(receiver);
+        assert SplContext.isSplObject(receiver);
         return receiver.getShape();
     }
 
@@ -31,7 +31,7 @@ public abstract class SplPropertyCacheNode extends Node {
      * Property names can be arbitrary Tone objects. We could call {@link Object#equals}, but that is
      * generally a bad idea and therefore discouraged in Truffle.{@link Object#equals} is a virtual
      * call that can call possibly large methods that we do not want in compiled code. For example,
-     * we do not want {@link ToneBigNumber#equals} in compiled code but behind a
+     * we do not want {@link SplBigNumber#equals} in compiled code but behind a
      * {@link CompilerDirectives.TruffleBoundary ). Therfore, we check types individually. The checks are semantically
      * the same as {@link SplEqualNode }.
      * <p>
@@ -43,13 +43,13 @@ public abstract class SplPropertyCacheNode extends Node {
     protected static boolean namesEqual(Object cachedName, Object name) {
         if (cachedName instanceof Long && name instanceof Long) {
             return (long) cachedName == (long) name;
-        } else if (cachedName instanceof ToneBigNumber && name instanceof ToneBigNumber) {
-            return ((ToneBigNumber) cachedName).equals(name);
+        } else if (cachedName instanceof SplBigNumber && name instanceof SplBigNumber) {
+            return ((SplBigNumber) cachedName).equals(name);
         } else if (cachedName instanceof Boolean && name instanceof Boolean) {
             return (boolean) cachedName == (boolean) name;
         } else if (cachedName instanceof String && name instanceof String) {
             return ((String) cachedName).equals(name);
-        } else if (cachedName instanceof ToneFunction && name instanceof ToneFunction) {
+        } else if (cachedName instanceof SplFunction && name instanceof SplFunction) {
             return cachedName == name;
         } else if (cachedName instanceof SplNull && name instanceof SplNull) {
             return cachedName == name;

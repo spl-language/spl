@@ -21,7 +21,7 @@ import com.spl.nodes.SplTypes;
 import com.spl.nodes.interop.ToneForeignToToneTypeNode;
 import com.spl.nodes.interop.ToneForeignToToneTypeNodeGen;
 import com.spl.nodes.runtime.SplUndefinedNameTypeErrorException;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplFunction;
 
 @ReportPolymorphism
 @TypeSystemReference(SplTypes.class)
@@ -54,8 +54,8 @@ public abstract class SplDispatchNode extends Node {
      * </p>
      * <p>
      * {@code assumptions = "callTargetStable"} Support for function redefinition: When a function
-     * is redefined, the call target maintained by the ToneFunction object is changed. To avoid a
-     * check for that, we use an Assumption that is invalidated by the ToneFunction when the change is
+     * is redefined, the call target maintained by the SplFunction object is changed. To avoid a
+     * check for that, we use an Assumption that is invalidated by the SplFunction when the change is
      * performed. Since checking an assumption is a no-op in compiled code, the assumption check
      * performed by the DSL does not add any overhead during optimized execution.
      * </p>
@@ -72,7 +72,7 @@ public abstract class SplDispatchNode extends Node {
                     guards = "function.getCallTarget() == cachedTarget", //
                     assumptions = "callTargetStable")
     @SuppressWarnings("unused")
-    protected static Object doDirect(ToneFunction function, Object[] arguments,
+    protected static Object doDirect(SplFunction function, Object[] arguments,
                                      @Cached("function.getCallTargetStable()") Assumption callTargetStable,
                                      @Cached("function.getCallTarget()") RootCallTarget cachedTarget,
                                      @Cached("create(cachedTarget)") DirectCallNode callNode) {
@@ -87,8 +87,8 @@ public abstract class SplDispatchNode extends Node {
      * no method inlining is performed.
      */
     @Specialization(replaces = "doDirect")
-    protected static Object doIndirect(ToneFunction function, Object[] arguments,
-                    @Cached("create()") IndirectCallNode callNode) {
+    protected static Object doIndirect(SplFunction function, Object[] arguments,
+                                       @Cached("create()") IndirectCallNode callNode) {
         /*
          * Tone has a quite simple call lookup: just ask the function for the current call target, and
          * call it.
@@ -105,7 +105,7 @@ public abstract class SplDispatchNode extends Node {
     }
 
     /**
-     * Language interoperability: If the function is a foreign value, i.e., not a ToneFunction, we use
+     * Language interoperability: If the function is a foreign value, i.e., not a SplFunction, we use
      * Truffle's interop API to execute the foreign function.
      */
     @Specialization(guards = "isForeignFunction(function)")
@@ -128,7 +128,7 @@ public abstract class SplDispatchNode extends Node {
     }
 
     protected static boolean isForeignFunction(TruffleObject function) {
-        return !(function instanceof ToneFunction);
+        return !(function instanceof SplFunction);
     }
 
     protected static Node createCrossLanguageCallNode() {

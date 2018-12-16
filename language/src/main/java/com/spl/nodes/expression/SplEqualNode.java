@@ -8,8 +8,8 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplBinaryNode;
 import com.spl.nodes.runtime.SplNull;
-import com.spl.runtime.ToneBigNumber;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplBigNumber;
+import com.spl.runtime.SplFunction;
 
 /**
  * The {@code ==} operator of Tone is defined on all types. Therefore, we need a
@@ -31,7 +31,7 @@ public abstract class SplEqualNode extends SplBinaryNode {
 
     @Specialization
     @TruffleBoundary
-    protected boolean equal(ToneBigNumber left, ToneBigNumber right) {
+    protected boolean equal(SplBigNumber left, SplBigNumber right) {
         return left.equals(right);
     }
 
@@ -46,9 +46,9 @@ public abstract class SplEqualNode extends SplBinaryNode {
     }
 
     @Specialization
-    protected boolean equal(ToneFunction left, ToneFunction right) {
+    protected boolean equal(SplFunction left, SplFunction right) {
         /*
-         * Our function registry maintains one canonical ToneFunction object per function name, so we
+         * Our function registry maintains one canonical SplFunction object per function name, so we
          * do not need equals().
          */
         return left == right;

@@ -6,7 +6,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplBinaryNode;
-import com.spl.runtime.ToneBigNumber;
+import com.spl.runtime.SplBigNumber;
 
 @NodeInfo(shortName = "/")
 public abstract class SplDivNode extends SplBinaryNode {
@@ -25,8 +25,8 @@ public abstract class SplDivNode extends SplBinaryNode {
 
     @Specialization
     @CompilerDirectives.TruffleBoundary
-    protected ToneBigNumber div(ToneBigNumber left, ToneBigNumber right) {
-        return new ToneBigNumber(left.getValue().divide(right.getValue()));
+    protected SplBigNumber div(SplBigNumber left, SplBigNumber right) {
+        return new SplBigNumber(left.getValue().divide(right.getValue()));
     }
 
     @Fallback

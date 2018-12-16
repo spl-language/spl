@@ -6,7 +6,7 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.SourceSection;
 import com.spl.nodes.runtime.SplNull;
-import com.spl.runtime.ToneBigNumber;
+import com.spl.runtime.SplBigNumber;
 import com.spl.runtime.SplContext;
 
 /**
@@ -67,13 +67,13 @@ public class SplTypeErrorException extends RuntimeException implements TruffleEx
             Object value = values[i];
             result.append(sep);
             sep = ", ";
-            if (value instanceof Long || value instanceof ToneBigNumber) {
+            if (value instanceof Long || value instanceof SplBigNumber) {
                 result.append("Number ").append(value);
             } else if (value instanceof Boolean) {
                 result.append("Boolean ").append(value);
             } else if (value instanceof String) {
                 result.append("String \"").append(value).append("\"");
-//            } else if (value instanceof ToneFunction) {
+//            } else if (value instanceof SplFunction) {
 //                result.append("Function ").append(value);
             } else if (value == SplNull.SINGLETON) {
                 result.append("NULL");

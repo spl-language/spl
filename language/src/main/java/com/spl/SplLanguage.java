@@ -22,8 +22,8 @@ import com.spl.nodes.local.SplLexicalScope;
 import com.spl.nodes.runtime.SplNull;
 import com.spl.parser.SplParser;
 import com.spl.runtime.SplContext;
-import com.spl.runtime.ToneBigNumber;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplBigNumber;
+import com.spl.runtime.SplFunction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-@TruffleLanguage.Registration(id = SplLanguage.ID, name = "Tone", defaultMimeType = SplLanguage.MIME_TYPE, characterMimeTypes = SplLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED)
+@TruffleLanguage.Registration(id = SplLanguage.ID, name = "Spl", defaultMimeType = SplLanguage.MIME_TYPE, characterMimeTypes = SplLanguage.MIME_TYPE, contextPolicy = ContextPolicy.SHARED)
 @ProvidedTags({StandardTags.CallTag.class, StandardTags.StatementTag.class, StandardTags.RootTag.class, StandardTags.ExpressionTag.class, DebuggerTags.AlwaysHalt.class})
 public final class SplLanguage extends TruffleLanguage<SplContext> {
     public static volatile int counter;
@@ -54,9 +54,10 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
     protected CallTarget parse(ParsingRequest request) throws Exception {
         Source source = request.getSource();
         Map<String, RootCallTarget> functions;
+
         /*
-         * Parse the provided source. At this point, we do not have a SplContext yet. Registration of
-         * the functions with the SplContext happens lazily in SplEvalRootNode.
+         * Проаналізуйте надане джерело. На даний момент у нас ще немає SplContext. Реєстрація
+         * функції з SplContext відбуваєься "lazy" в SplEvalRootNode.
          */
         if (request.getArgumentNames().isEmpty()) {
             functions = SplParser.parseSpl(this, source);
@@ -81,27 +82,16 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
         RootCallTarget main = functions.get("main");
         RootNode evalMain;
         if (main != null) {
-            /*
-             * We have a main function, so "evaluating" the parsed source means invoking that main
-             * function. However, we need to lazily register functions into the SplContext first, so
-             * we cannot use the original SplRootNode for the main function. Instead, we create a new
-             * SplEvalRootNode that does everything we need.
-             */
+
             evalMain = new SplEvalRootNode(this, main, functions);
         } else {
-            /*
-             * Even without a main function, "evaluating" the parsed source needs to register the
-             * functions into the SplContext.
-             */
+
+            /* навіть якщо нема main реєстрємо всі функції */
             evalMain = new SplEvalRootNode(this, null, functions);
         }
         return Truffle.getRuntime().createCallTarget(evalMain);
     }
 
-    /*
-     * Still necessary for the old Tone TCK to pass. We should remove with the old TCK. New language
-     * should not override this.
-     */
     @SuppressWarnings("deprecation")
     @Override
     protected Object findExportedSymbol(SplContext context, String globalName, boolean onlyExplicit) {
@@ -119,7 +109,7 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
             return false;
         }
         TruffleObject truffleObject = (TruffleObject) object;
-        return truffleObject instanceof ToneFunction || truffleObject instanceof ToneBigNumber || SplContext.isToneObject(truffleObject);
+        return truffleObject instanceof SplFunction || truffleObject instanceof SplBigNumber || SplContext.isSplObject(truffleObject);
     }
 
     @Override
@@ -127,8 +117,8 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
         if (value == SplNull.SINGLETON) {
             return "NULL";
         }
-        if (value instanceof ToneBigNumber) {
-            return super.toString(context, ((ToneBigNumber) value).getValue());
+        if (value instanceof SplBigNumber) {
+            return super.toString(context, ((SplBigNumber) value).getValue());
         }
         if (value instanceof Long) {
             return Long.toString((Long) value);
@@ -138,7 +128,7 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
 
     @Override
     protected Object findMetaObject(SplContext context, Object value) {
-        if (value instanceof Number || value instanceof ToneBigNumber) {
+        if (value instanceof Number || value instanceof SplBigNumber) {
             return "Number";
         }
         if (value instanceof Boolean) {
@@ -150,7 +140,7 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
         if (value == SplNull.SINGLETON) {
             return "Null";
         }
-        if (value instanceof ToneFunction) {
+        if (value instanceof SplFunction) {
             return "Function";
         }
         return "Object";
@@ -158,8 +148,8 @@ public final class SplLanguage extends TruffleLanguage<SplContext> {
 
     @Override
     protected SourceSection findSourceLocation(SplContext context, Object value) {
-        if (value instanceof ToneFunction) {
-            ToneFunction f = (ToneFunction) value;
+        if (value instanceof SplFunction) {
+            SplFunction f = (SplFunction) value;
             return f.getCallTarget().getRootNode().getSourceSection();
         }
         return null;

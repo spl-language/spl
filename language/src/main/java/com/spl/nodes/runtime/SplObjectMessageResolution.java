@@ -18,13 +18,13 @@ import com.spl.nodes.call.SplDispatchNodeGen;
 import com.spl.nodes.interop.ToneForeignToToneTypeNode;
 import com.spl.nodes.interop.ToneForeignToToneTypeNodeGen;
 import com.spl.runtime.SplContext;
-import com.spl.runtime.ToneFunction;
-import com.spl.runtime.ToneObjectType;
+import com.spl.runtime.SplFunction;
+import com.spl.runtime.SplObjectType;
 
 /**
  * The class containing all message resolution implementations of an Tone object.
  */
-@MessageResolution(receiverType = ToneObjectType.class)
+@MessageResolution(receiverType = SplObjectType.class)
 public class SplObjectMessageResolution {
     /*
      * An Tone object resolves the WRITE message and maps it to an object property write access.
@@ -106,10 +106,10 @@ public class SplObjectMessageResolution {
 
         public Object access(DynamicObject receiver, String name, Object[] arguments) {
             Object property = receiver.get(name);
-            if (property instanceof ToneFunction) {
-                ToneFunction function = (ToneFunction) property;
+            if (property instanceof SplFunction) {
+                SplFunction function = (SplFunction) property;
                 Object[] arr = new Object[arguments.length];
-                // Before the arguments can be used by the ToneFunction, they need to be converted to
+                // Before the arguments can be used by the SplFunction, they need to be converted to
                 // Tone
                 // values.
                 for (int i = 0; i < arguments.length; i++) {
@@ -139,7 +139,7 @@ public class SplObjectMessageResolution {
             Object property = receiver.get(name);
             if (property == null) {
                 return KeyInfo.INSERTABLE;
-            } else if (property instanceof ToneFunction) {
+            } else if (property instanceof SplFunction) {
                 return KeyInfo.READABLE | KeyInfo.REMOVABLE | KeyInfo.MODIFIABLE | KeyInfo.INVOCABLE;
             } else {
                 return KeyInfo.READABLE | KeyInfo.REMOVABLE | KeyInfo.MODIFIABLE;

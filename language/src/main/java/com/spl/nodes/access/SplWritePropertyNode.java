@@ -35,7 +35,7 @@ import com.spl.runtime.SplContext;
 @ImportStatic({SplContext.class, Message.class})
 public abstract class SplWritePropertyNode extends SplExpressionNode {
 
-    @Specialization(guards = "isToneObject(receiver)")
+    @Specialization(guards = "isSplObject(receiver)")
     protected Object write(DynamicObject receiver, Object name, Object value,
                            @Cached("create()") SplWritePropertyCacheNode writeNode) {
         /**
@@ -51,7 +51,7 @@ public abstract class SplWritePropertyNode extends SplExpressionNode {
      * Language interoperability: If the receiver object is a foreign value we use Truffle's interop
      * API to access the foreign data.
      */
-    @Specialization(guards = "!isToneObject(receiver)")
+    @Specialization(guards = "!isSplObject(receiver)")
     protected void writeForeign(TruffleObject receiver, Object name, Object value,
                                 // The child node to access the foreign object
                                 @Cached("WRITE.createNode()") Node foreignWriteNode) {

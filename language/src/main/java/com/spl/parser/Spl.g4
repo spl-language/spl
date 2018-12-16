@@ -1,5 +1,6 @@
 grammar Spl;
 
+// фрагмент коду який добавляється як заголовок парсера
 @parser::header
 {
 // DO NOT MODIFY - generated from Spl.g4
@@ -19,11 +20,13 @@ import com.spl.parser.SplNodeFactory;
 import com.spl.parser.SplLexer;
 }
 
+// фрагмент коду який добавляється як заголовок lexer
 @lexer::header
 {
 // DO NOT MODIFY - generated from Spl.g4
 }
 
+// фрагмент коду який добавляється як частина створеного класу для parser
 @parser::members
 {
 private SplNodeFactory factory;
@@ -63,45 +66,45 @@ public static Map<String, RootCallTarget> parseSpl(SplLanguage language, Source 
 }
 
 // parser
-
+// Файл мови spl повинен містити функції (не містить глобальних змінних), в яких точкою входу буде метод main
 spl
 :
 dfunc dfunc* EOF
 ;
 
-// define functioin
+
+// Визначення функціх в spl
 dfunc
 :
-IDEN
-s='('
+IDEN // назва функції
+s='('                                                                                  // відкриваються дужки для параметрів
                                                 { factory.startFunction($IDEN, $s); }
 (
-    IDEN                                        { factory.addFormalParameter($IDEN); }
+    IDEN                                        { factory.addFormalParameter($IDEN); } // назва параметра
     (
-        ','
-        IDEN                                    { factory.addFormalParameter($IDEN); }
-    )*
-)?
+        ','                                                                            // може містити декілька параметрів розділені комою
+        IDEN                                    { factory.addFormalParameter($IDEN); } // назва параметра
+    )*                                                                                 // кількість параметрів для функції необмежена
+)?                                                                                     // функція може не мати параметри
 ')'
-block=body[false]                               { factory.finishFunction($block.result); }
+block=body[false]                               { factory.finishFunction($block.result); } // тіло функції
 ;
 
 
-
-body [boolean inLoop] returns [SplStatementNode result]
+body [boolean inLoop] returns [SplStatementNode result] // описує тіло функції
 :                                               { factory.startBlock();
                                                   List<SplStatementNode> body = new ArrayList<>(); }
-s='begin'
+s='begin' // початок функції
 (
     statement[inLoop]';'                        { body.add($statement.result); }
 )*
     statement[inLoop]                           { body.add($statement.result); }
-e='end'
+e='end' // кінець функції
                                                 { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 ;
 
 
-statement [boolean inLoop] returns [SplStatementNode result]
+statement [boolean inLoop] returns [SplStatementNode result] // можливі значення які містить тіло функції
 :
 (
     while_statement                             { $result = $while_statement.result; }
@@ -125,7 +128,7 @@ statement [boolean inLoop] returns [SplStatementNode result]
 ;
 
 
-dvarb returns [SplStatementNode result]
+dvarb returns [SplStatementNode result] // опис змінних
 :
     id='int'                                    { List<Token> variables = new ArrayList<>(); }
     IDEN                                        { variables.add($IDEN); }
@@ -136,7 +139,7 @@ dvarb returns [SplStatementNode result]
 ;
 
 
-dconst returns [SplStatementNode result]
+dconst returns [SplStatementNode result] // опис констант та їх значення
 :
     id='const'                                  { List<TokenAndValue> tokenValues = new ArrayList<>(); }
     IDEN                                        { TokenAndValue current = new TokenAndValue($IDEN); }
@@ -153,7 +156,7 @@ dconst returns [SplStatementNode result]
 ;
 
 
-while_statement returns [SplStatementNode result]
+while_statement returns [SplStatementNode result] // цикл while
 :
 w='while'
 condition=expr
@@ -161,7 +164,7 @@ block=while_block                                { $result = factory.createWhile
 ;
 
 
-while_block returns [SplStatementNode result]
+while_block returns [SplStatementNode result] // тіло циклу while
 :                                               { factory.startBlock();
                                                   List<SplStatementNode> body = new ArrayList<>(); }
 s='do'
@@ -175,7 +178,7 @@ e='end'
 
 
 
-if_statement [boolean inLoop] returns [SplStatementNode result]
+if_statement [boolean inLoop] returns [SplStatementNode result] // розгалуження if
 :
 i='if'
 condition=expr
@@ -183,7 +186,7 @@ then=if_block[inLoop]                           { $result = factory.createIf($i,
 ;
 
 
-if_block [boolean inLoop] returns [SplStatementNode result]
+if_block [boolean inLoop] returns [SplStatementNode result] // тіло if
 :                                               { factory.startBlock();
                                                   List<SplStatementNode> body = new ArrayList<>(); }
 s='then'
@@ -196,7 +199,7 @@ e='end'
 ;
 
 
-return_statement returns [SplStatementNode result]
+return_statement returns [SplStatementNode result] // поверненя значення з функції
 :
 r='return'                                      { SplExpressionNode value = null; }
 (
@@ -205,7 +208,7 @@ r='return'                                      { SplExpressionNode value = null
 ;
 
 
-expr returns [SplExpressionNode result]
+expr returns [SplExpressionNode result] // логічне "або" для boolean перевірок
 :
 logic_term                                      { $result = $logic_term.result; }
 (
@@ -215,7 +218,7 @@ logic_term                                      { $result = $logic_term.result; 
 ;
 
 
-logic_term returns [SplExpressionNode result]
+logic_term returns [SplExpressionNode result] // логічне "i" для boolean перевірок
 :
 logic_factor                                    { $result = $logic_factor.result; }
 (
@@ -225,7 +228,7 @@ logic_factor                                    { $result = $logic_factor.result
 ;
 
 
-logic_factor returns [SplExpressionNode result]
+logic_factor returns [SplExpressionNode result] // порівняння чисел
 :
 arithmetic                                      { $result = $arithmetic.result; }
 (
@@ -235,7 +238,7 @@ arithmetic                                      { $result = $arithmetic.result; 
 ;
 
 
-arithmetic returns [SplExpressionNode result]
+arithmetic returns [SplExpressionNode result] // оператор + та -
 :
 term                                            { $result = $term.result; }
 (
@@ -245,7 +248,7 @@ term                                            { $result = $term.result; }
 ;
 
 
-term returns [SplExpressionNode result]
+term returns [SplExpressionNode result] // оператор *, /, %
 :
 fact                                            { $result = $fact.result; }
 (
@@ -255,7 +258,7 @@ fact                                            { $result = $fact.result; }
 ;
 
 
-fact returns [SplExpressionNode result]
+fact returns [SplExpressionNode result] // виклик функції, або зміних або чисел
 :
 (
     IDEN                                        { SplExpressionNode assignmentName = factory.createStringLiteral($IDEN, false); }
@@ -277,6 +280,7 @@ fact returns [SplExpressionNode result]
 ;
 
 
+// описує параметри для виклику функцій
 member_expression [SplExpressionNode r, SplExpressionNode assignmentReceiver, SplExpressionNode assignmentName] returns [SplExpressionNode result]
 :                                               { SplExpressionNode receiver = r;
                                                   SplExpressionNode nestedAssignmentName = null; }
@@ -311,9 +315,9 @@ member_expression [SplExpressionNode r, SplExpressionNode assignmentReceiver, Sp
 
 // lexer
 
-WS : [ \t\r\n\u000C]+ -> skip;
-COMMENT : '/*' .*? '*/' -> skip;
-LINE_COMMENT : '//' ~[\r\n]* -> skip;
+WS : [ \t\r\n\u000C]+ -> skip; // пропускаєм таби, пробіли, новий рядок
+COMMENT : '/*' .*? '*/' -> skip; // пропускаєм багаторядкові коментарі
+LINE_COMMENT : '//' ~[\r\n]* -> skip; // пропускаєм однорядковий коментар
 
 fragment LETTER : [A-Z] | [a-z] | '_' | '$';
 fragment NON_ZERO_DIGIT : [1-9];

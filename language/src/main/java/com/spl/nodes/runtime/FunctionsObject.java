@@ -7,7 +7,7 @@ import com.oracle.truffle.api.interop.Resolve;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnknownIdentifierException;
 import com.oracle.truffle.api.nodes.Node;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplFunction;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class FunctionsObject implements TruffleObject {
 
-    public final Map<String, ToneFunction> functions = new HashMap<>();
+    public final Map<String, SplFunction> functions = new HashMap<>();
 
     public FunctionsObject() {
     }

@@ -26,13 +26,13 @@ import java.util.logging.Level;
  * call node can keep the call target returned by {@link #getCallTarget()} cached until the
  * assumption returned by {@link #getCallTargetStable()} is valid.
  * <p>
- * The {@link #callTarget} can be {@code null}. To ensure that only one {@link ToneFunction} instance
- * per name exists, the {@link ToneFunctionRegistry} creates an instance also when performing name
+ * The {@link #callTarget} can be {@code null}. To ensure that only one {@link SplFunction} instance
+ * per name exists, the {@link SplFunctionRegistry} creates an instance also when performing name
  * lookup. A function that has been looked up, i.e., used, but not defined, has a call target that
  * encapsulates a {@link SplUndefinedFunctionRootNode}.
  */
-public final class ToneFunction implements TruffleObject {
-    private static final TruffleLogger LOG = TruffleLogger.getLogger(SplLanguage.ID, ToneFunction.class);
+public final class SplFunction implements TruffleObject {
+    private static final TruffleLogger LOG = TruffleLogger.getLogger(SplLanguage.ID, SplFunction.class);
 
     /** The name of the function. */
     private final String name;
@@ -47,7 +47,7 @@ public final class ToneFunction implements TruffleObject {
      */
     private final CyclicAssumption callTargetStable;
 
-    protected ToneFunction(SplLanguage language, String name) {
+    protected SplFunction(SplLanguage language, String name) {
         this.name = name;
         this.callTarget = Truffle.getRuntime().createCallTarget(new SplUndefinedFunctionRootNode(language, name));
         this.callTargetStable = new CyclicAssumption(name);

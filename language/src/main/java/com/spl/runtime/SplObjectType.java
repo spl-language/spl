@@ -6,15 +6,15 @@ import com.oracle.truffle.api.object.DynamicObject;
 import com.oracle.truffle.api.object.ObjectType;
 import com.spl.nodes.runtime.SplObjectMessageResolutionForeign;
 
-public final class ToneObjectType extends ObjectType {
+public final class SplObjectType extends ObjectType {
 
-    public static final ObjectType SINGLETON = new ToneObjectType();
+    public static final ObjectType SINGLETON = new SplObjectType();
 
-    private ToneObjectType() {
+    private SplObjectType() {
     }
 
     public static boolean isInstance(TruffleObject obj) {
-        return SplContext.isToneObject(obj);
+        return SplContext.isSplObject(obj);
     }
 
     @Override

@@ -5,8 +5,8 @@ import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 import com.spl.nodes.runtime.SplNull;
-import com.spl.runtime.ToneBigNumber;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplBigNumber;
+import com.spl.runtime.SplFunction;
 
 import java.math.BigInteger;
 
@@ -15,11 +15,11 @@ import static com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 @TypeSystem({
         boolean.class,
         long.class,
-        ToneBigNumber.class,
+        SplBigNumber.class,
         double.class,
         String.class,
         SplNull.class,
-        ToneFunction.class})
+        SplFunction.class})
 public class SplTypes {
 
     @TypeCheck(SplNull.class)
@@ -35,7 +35,7 @@ public class SplTypes {
 
     @ImplicitCast
     @TruffleBoundary
-    public static ToneBigNumber castBigNumber(long value) {
-        return new ToneBigNumber(BigInteger.valueOf(value));
+    public static SplBigNumber castBigNumber(long value) {
+        return new SplBigNumber(BigInteger.valueOf(value));
     }
 }

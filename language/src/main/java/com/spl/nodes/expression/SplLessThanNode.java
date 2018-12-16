@@ -6,7 +6,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SplBinaryNode;
-import com.spl.runtime.ToneBigNumber;
+import com.spl.runtime.SplBigNumber;
 
 @NodeInfo(shortName = "<")
 public abstract class SplLessThanNode extends SplBinaryNode {
@@ -18,7 +18,7 @@ public abstract class SplLessThanNode extends SplBinaryNode {
 
     @Specialization
     @CompilerDirectives.TruffleBoundary
-    protected boolean lessThan(ToneBigNumber left, ToneBigNumber right) {
+    protected boolean lessThan(SplBigNumber left, SplBigNumber right) {
         return left.compareTo(right) < 0;
     }
 

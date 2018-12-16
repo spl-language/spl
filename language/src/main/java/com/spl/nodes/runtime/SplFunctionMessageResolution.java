@@ -7,14 +7,14 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.Node;
 import com.spl.nodes.call.SplDispatchNode;
 import com.spl.nodes.call.SplDispatchNodeGen;
-import com.spl.runtime.ToneFunction;
+import com.spl.runtime.SplFunction;
 
 import static com.spl.runtime.SplContext.fromForeignValue;
 
 /**
- * The class containing all message resolution implementations of {@link ToneFunction}.
+ * The class containing all message resolution implementations of {@link SplFunction}.
  */
-@MessageResolution(receiverType = ToneFunction.class)
+@MessageResolution(receiverType = SplFunction.class)
 public class SplFunctionMessageResolution {
     /*
      * An Tone function resolves an EXECUTE message.
@@ -25,9 +25,9 @@ public class SplFunctionMessageResolution {
         @Child
         private SplDispatchNode dispatch = SplDispatchNodeGen.create();
 
-        public Object access(ToneFunction receiver, Object[] arguments) {
+        public Object access(SplFunction receiver, Object[] arguments) {
             Object[] arr = new Object[arguments.length];
-            // Before the arguments can be used by the ToneFunction, they need to be converted to Tone
+            // Before the arguments can be used by the SplFunction, they need to be converted to Tone
             // values.
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = fromForeignValue(arguments[i]);
@@ -43,7 +43,7 @@ public class SplFunctionMessageResolution {
     @Resolve(message = "IS_EXECUTABLE")
     public abstract static class ToneForeignIsExecutableNode extends Node {
         public Object access(Object receiver) {
-            return receiver instanceof ToneFunction;
+            return receiver instanceof SplFunction;
         }
     }
 
@@ -51,7 +51,7 @@ public class SplFunctionMessageResolution {
     public abstract static class CheckFunction extends Node {
 
         protected static boolean test(TruffleObject receiver) {
-            return receiver instanceof ToneFunction;
+            return receiver instanceof SplFunction;
         }
     }
 }
