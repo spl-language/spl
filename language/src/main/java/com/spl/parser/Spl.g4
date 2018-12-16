@@ -1,7 +1,3 @@
-/*
- * The parser and lexer need to be generated using "mx create-spl-parser".
- */
-
 grammar Spl;
 
 @parser::header
@@ -87,12 +83,12 @@ s='('
     )*
 )?
 ')'
-body=block[false]                               { factory.finishFunction($body.result); }
+block=body[false]                               { factory.finishFunction($block.result); }
 ;
 
 
 
-block [boolean inLoop] returns [SplStatementNode result]
+body [boolean inLoop] returns [SplStatementNode result]
 :                                               { factory.startBlock();
                                                   List<SplStatementNode> body = new ArrayList<>(); }
 s='begin'
@@ -116,15 +112,32 @@ statement [boolean inLoop] returns [SplStatementNode result]
 |
     expression                                  { $result = $expression.result; }
 |
-    d='debugger'                                { $result = factory.createDebugger($d); }
+    dvarb                                       { $result = $dvarb.result; }
 |
+    dconst                                      { $result = $dconst.result; }
+|
+    id='print'
+    expression                                  { $result = factory.createPrint($id, $expression.result); }
+|
+    id='read'
+    IDENTIFIER                                  { $result = factory.createRead($id, $IDENTIFIER); }
+)
+;
+
+
+dvarb returns [SplStatementNode result]
+:
     id='int'                                    { List<Token> variables = new ArrayList<>(); }
     IDENTIFIER                                  { variables.add($IDENTIFIER); }
     (
         ','
         IDENTIFIER                              { variables.add($IDENTIFIER); }
     )*                                          { $result = factory.declareIntVariables($id, variables); }
-|
+;
+
+
+dconst returns [SplStatementNode result]
+:
     id='const'                                  { List<TokenAndValue> tokenValues = new ArrayList<>(); }
     IDENTIFIER                                  { TokenAndValue current = new TokenAndValue($IDENTIFIER); }
     '='
@@ -136,14 +149,7 @@ statement [boolean inLoop] returns [SplStatementNode result]
         '='
         expression                              { current.setSplExpressionNode($expression.result);
                                                   tokenValues.add(current); }
-    )*                                           { $result = factory.declareConstVariable($id, tokenValues); }
-|
-    id='print'
-    expression                                  { $result = factory.createPrint($id, $expression.result); }
-|
-    id='read'
-    IDENTIFIER                                  { $result = factory.createRead($id, $IDENTIFIER); }
-)
+    )*                                          { $result = factory.declareConstVariable($id, tokenValues); }
 ;
 
 
@@ -151,7 +157,7 @@ while_statement returns [SplStatementNode result]
 :
 w='while'
 condition=expression
-body=while_block                                { $result = factory.createWhile($w, $condition.result, $body.result); }
+block=while_block                                { $result = factory.createWhile($w, $condition.result, $block.result); }
 ;
 
 
