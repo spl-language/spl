@@ -503,14 +503,14 @@ public class SplNodeFactory {
             }
         }
         lexicalScope.locals.put(name, frameSlot);
-        if (((SlotInfo)frameSlot.getInfo()).getType().isInt()) {
-            if (!(valueNode instanceof SplLongLiteralNode ||
-                    valueNode instanceof SplFunctionLiteralNode ||
-                    valueNode instanceof SplInvokeNode ||
-                    valueNode instanceof SplReadLocalVariableNode)) {
-                throw new SplException("Incompatible types.");
-            }
-        }
+//        if (((SlotInfo)frameSlot.getInfo()).getType().isInt()) {
+//            if (!(valueNode instanceof SplLongLiteralNode ||
+//                    valueNode instanceof SplFunctionLiteralNode ||
+//                    valueNode instanceof SplInvokeNode ||
+//                    valueNode instanceof SplReadLocalVariableNode)) {
+//                throw new SplException("Incompatible types.");
+//            }
+//        }
         final SplExpressionNode result = SplWriteLocalVariableNodeGen.create(valueNode, frameSlot);
 
         if (valueNode.hasSource()) {

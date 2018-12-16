@@ -1,7 +1,7 @@
 // Generated from /home/george/Projects/spl/language/src/main/java/com/spl/parser/Spl.g4 by ANTLR 4.7
 package com.spl.parser;
 
-// DO NOT MODIFY - generated from Tone.g4 using "mx create-tone-parser"
+// DO NOT MODIFY - generated from Spl.g4
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

@@ -70,9 +70,9 @@ public abstract class SplWriteLocalVariableNode extends SplExpressionNode {
          */
         SlotInfo info = (SlotInfo) getSlot().getInfo();
         if (info.getType().isInt() && !(value instanceof Long)) {
-            throw new SplException("Not valid type");
+            throw new SplException("Not valid type assigned to variable \"" + getSlot().getIdentifier() + "\". You have to assign int value.");
         } else if (SplType.BOOL.equals(info.getType()) && !(value instanceof Long)) {
-            throw new SplException("Not valid type");
+            throw new SplException("Not valid type assigned to variable \"" + getSlot().getIdentifier() + "\". You have to assign boolean value.");
         }
         frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
 

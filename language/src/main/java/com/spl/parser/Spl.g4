@@ -6,7 +6,7 @@ grammar Spl;
 
 @parser::header
 {
-// DO NOT MODIFY - generated from Spl.g4 using "mx create-tone-parser"
+// DO NOT MODIFY - generated from Spl.g4
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +18,19 @@ import com.spl.SplLanguage;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.SplStatementNode;
-import com.spl.parser.ToneParseError;
+import com.spl.parser.SplParseError;
 import com.spl.parser.SplNodeFactory;
 import com.spl.parser.SplLexer;
 }
 
 @lexer::header
 {
-// DO NOT MODIFY - generated from Tone.g4 using "mx create-tone-parser"
+// DO NOT MODIFY - generated from Spl.g4
 }
 
 @parser::members
 {
-private ToneNodeFactory factory;
+private SplNodeFactory factory;
 private Source source;
 
 private static final class BailoutErrorListener extends BaseErrorListener {
@@ -41,14 +41,14 @@ private static final class BailoutErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         String location = "-- line " + line + " col " + (charPositionInLine + 1) + ": ";
-        throw new ToneParseError(source, line, charPositionInLine + 1, offendingSymbol == null ? 1 : ((Token) offendingSymbol).getText().length(), String.format("Error(s) parsing script:%n" + location + msg));
+        throw new SplParseError(source, line, charPositionInLine + 1, offendingSymbol == null ? 1 : ((Token) offendingSymbol).getText().length(), String.format("Error(s) parsing script:%n" + location + msg));
     }
 }
 
 public void SemErr(Token token, String message) {
     int col = token.getCharPositionInLine() + 1;
     String location = "-- line " + token.getLine() + " col " + col + ": ";
-    throw new ToneParseError(source, token.getLine(), col, token.getText().length(), String.format("Error(s) parsing script:%n" + location + message));
+    throw new SplParseError(source, token.getLine(), col, token.getText().length(), String.format("Error(s) parsing script:%n" + location + message));
 }
 
 public static Map<String, RootCallTarget> parseSpl(SplLanguage language, Source source) {
@@ -59,7 +59,7 @@ public static Map<String, RootCallTarget> parseSpl(SplLanguage language, Source 
     BailoutErrorListener listener = new BailoutErrorListener(source);
     lexer.addErrorListener(listener);
     parser.addErrorListener(listener);
-    parser.factory = new ToneNodeFactory(language, source);
+    parser.factory = new SplNodeFactory(language, source);
     parser.source = source;
     parser.spl();
     return parser.factory.getAllFunctions();
@@ -136,7 +136,7 @@ statement [boolean inLoop] returns [SplStatementNode result]
         '='
         expression                              { current.setSplExpressionNode($expression.result);
                                                   tokenValues.add(current); }
-    )                                           { $result = factory.declareConstVariable($id, tokenValues); }
+    )*                                           { $result = factory.declareConstVariable($id, tokenValues); }
 |
     id='print'
     expression                                  { $result = factory.createPrint($id, $expression.result); }

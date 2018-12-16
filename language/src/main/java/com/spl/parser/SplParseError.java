@@ -5,7 +5,7 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
-public class ToneParseError extends RuntimeException implements TruffleException {
+public class SplParseError extends RuntimeException implements TruffleException {
 
     public static final long serialVersionUID = 1L;
     private final Source source;
@@ -13,7 +13,7 @@ public class ToneParseError extends RuntimeException implements TruffleException
     private final int column;
     private final int length;
 
-    public ToneParseError(Source source, int line, int column, int length, String message) {
+    public SplParseError(Source source, int line, int column, int length, String message) {
         super(message);
         this.source = source;
         this.line = line;
