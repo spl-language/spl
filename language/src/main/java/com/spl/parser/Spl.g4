@@ -72,14 +72,14 @@ dfunc dfunc* EOF
 // define functioin
 dfunc
 :
-IDENTIFIER
+IDEN
 s='('
-                                                { factory.startFunction($IDENTIFIER, $s); }
+                                                { factory.startFunction($IDEN, $s); }
 (
-    IDENTIFIER                                  { factory.addFormalParameter($IDENTIFIER); }
+    IDEN                                        { factory.addFormalParameter($IDEN); }
     (
         ','
-        IDENTIFIER                              { factory.addFormalParameter($IDENTIFIER); }
+        IDEN                                    { factory.addFormalParameter($IDEN); }
     )*
 )?
 ')'
@@ -120,7 +120,7 @@ statement [boolean inLoop] returns [SplStatementNode result]
     expression                                  { $result = factory.createPrint($id, $expression.result); }
 |
     id='read'
-    IDENTIFIER                                  { $result = factory.createRead($id, $IDENTIFIER); }
+    IDEN                                        { $result = factory.createRead($id, $IDEN); }
 )
 ;
 
@@ -128,10 +128,10 @@ statement [boolean inLoop] returns [SplStatementNode result]
 dvarb returns [SplStatementNode result]
 :
     id='int'                                    { List<Token> variables = new ArrayList<>(); }
-    IDENTIFIER                                  { variables.add($IDENTIFIER); }
+    IDEN                                        { variables.add($IDEN); }
     (
         ','
-        IDENTIFIER                              { variables.add($IDENTIFIER); }
+        IDEN                                    { variables.add($IDEN); }
     )*                                          { $result = factory.declareIntVariables($id, variables); }
 ;
 
@@ -139,13 +139,13 @@ dvarb returns [SplStatementNode result]
 dconst returns [SplStatementNode result]
 :
     id='const'                                  { List<TokenAndValue> tokenValues = new ArrayList<>(); }
-    IDENTIFIER                                  { TokenAndValue current = new TokenAndValue($IDENTIFIER); }
+    IDEN                                        { TokenAndValue current = new TokenAndValue($IDEN); }
     '='
     expression                                  { current.setSplExpressionNode($expression.result);
                                                   tokenValues.add(current); }
     (
         ','
-        IDENTIFIER                              { current = new TokenAndValue($IDENTIFIER); }
+        IDEN                                    { current = new TokenAndValue($IDEN); }
         '='
         expression                              { current.setSplExpressionNode($expression.result);
                                                   tokenValues.add(current); }
@@ -188,9 +188,9 @@ if_block [boolean inLoop] returns [SplStatementNode result]
                                                   List<SplStatementNode> body = new ArrayList<>(); }
 s='then'
 (
-    statement[false]';'                        { body.add($statement.result); }
+    statement[false]';'                         { body.add($statement.result); }
 )*
-    statement[false]                           { body.add($statement.result); }
+    statement[false]                            { body.add($statement.result); }
 e='end'
                                                 { $result = factory.finishBlock(body, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 ;
@@ -258,7 +258,7 @@ factor                                          { $result = $factor.result; }
 factor returns [SplExpressionNode result]
 :
 (
-    IDENTIFIER                                  { SplExpressionNode assignmentName = factory.createStringLiteral($IDENTIFIER, false); }
+    IDEN                                        { SplExpressionNode assignmentName = factory.createStringLiteral($IDEN, false); }
     (
         member_expression[null, null, assignmentName] { $result = $member_expression.result; }
     |
@@ -321,6 +321,6 @@ fragment DIGIT : [0-9];
 fragment TAB : '\t';
 fragment STRING_CHAR : ~('"' | '\\' | '\r' | '\n');
 
-IDENTIFIER : LETTER (LETTER | DIGIT)*;
+IDEN : LETTER (LETTER | DIGIT)*;
 STRING_LITERAL : '"' STRING_CHAR* '"';
 NUMERIC_LITERAL : '0' | NON_ZERO_DIGIT DIGIT*;

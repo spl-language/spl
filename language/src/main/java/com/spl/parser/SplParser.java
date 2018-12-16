@@ -38,7 +38,7 @@ public class SplParser extends Parser {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, WS=30, COMMENT=31, LINE_COMMENT=32, 
-		IDENTIFIER=33, STRING_LITERAL=34, NUMERIC_LITERAL=35;
+		IDEN=33, STRING_LITERAL=34, NUMERIC_LITERAL=35;
 	public static final int
 		RULE_spl = 0, RULE_dfunc = 1, RULE_body = 2, RULE_statement = 3, RULE_dvarb = 4, 
 		RULE_dconst = 5, RULE_while_statement = 6, RULE_while_block = 7, RULE_if_statement = 8, 
@@ -60,7 +60,7 @@ public class SplParser extends Parser {
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, "WS", "COMMENT", "LINE_COMMENT", "IDENTIFIER", 
+		null, null, null, null, null, null, "WS", "COMMENT", "LINE_COMMENT", "IDEN", 
 		"STRING_LITERAL", "NUMERIC_LITERAL"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -174,7 +174,7 @@ public class SplParser extends Parser {
 			setState(40);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==IDENTIFIER) {
+			while (_la==IDEN) {
 				{
 				{
 				setState(37);
@@ -201,12 +201,12 @@ public class SplParser extends Parser {
 	}
 
 	public static class DfuncContext extends ParserRuleContext {
-		public Token IDENTIFIER;
+		public Token IDEN;
 		public Token s;
 		public BodyContext block;
-		public List<TerminalNode> IDENTIFIER() { return getTokens(SplParser.IDENTIFIER); }
-		public TerminalNode IDENTIFIER(int i) {
-			return getToken(SplParser.IDENTIFIER, i);
+		public List<TerminalNode> IDEN() { return getTokens(SplParser.IDEN); }
+		public TerminalNode IDEN(int i) {
+			return getToken(SplParser.IDEN, i);
 		}
 		public BodyContext body() {
 			return getRuleContext(BodyContext.class,0);
@@ -225,18 +225,18 @@ public class SplParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(45);
-			((DfuncContext)_localctx).IDENTIFIER = match(IDENTIFIER);
+			((DfuncContext)_localctx).IDEN = match(IDEN);
 			setState(46);
 			((DfuncContext)_localctx).s = match(T__0);
-			 factory.startFunction(((DfuncContext)_localctx).IDENTIFIER, ((DfuncContext)_localctx).s); 
+			 factory.startFunction(((DfuncContext)_localctx).IDEN, ((DfuncContext)_localctx).s); 
 			setState(58);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (_la==IDENTIFIER) {
+			if (_la==IDEN) {
 				{
 				setState(48);
-				((DfuncContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-				 factory.addFormalParameter(((DfuncContext)_localctx).IDENTIFIER); 
+				((DfuncContext)_localctx).IDEN = match(IDEN);
+				 factory.addFormalParameter(((DfuncContext)_localctx).IDEN); 
 				setState(55);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -246,8 +246,8 @@ public class SplParser extends Parser {
 					setState(50);
 					match(T__1);
 					setState(51);
-					((DfuncContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-					 factory.addFormalParameter(((DfuncContext)_localctx).IDENTIFIER); 
+					((DfuncContext)_localctx).IDEN = match(IDEN);
+					 factory.addFormalParameter(((DfuncContext)_localctx).IDEN); 
 					}
 					}
 					setState(57);
@@ -354,7 +354,7 @@ public class SplParser extends Parser {
 		public DvarbContext dvarb;
 		public DconstContext dconst;
 		public Token id;
-		public Token IDENTIFIER;
+		public Token IDEN;
 		public While_statementContext while_statement() {
 			return getRuleContext(While_statementContext.class,0);
 		}
@@ -373,7 +373,7 @@ public class SplParser extends Parser {
 		public DconstContext dconst() {
 			return getRuleContext(DconstContext.class,0);
 		}
-		public TerminalNode IDENTIFIER() { return getToken(SplParser.IDENTIFIER, 0); }
+		public TerminalNode IDEN() { return getToken(SplParser.IDEN, 0); }
 		public StatementContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public StatementContext(ParserRuleContext parent, int invokingState, boolean inLoop) {
 			super(parent, invokingState);
@@ -415,7 +415,7 @@ public class SplParser extends Parser {
 			case T__0:
 			case T__24:
 			case T__25:
-			case IDENTIFIER:
+			case IDEN:
 			case STRING_LITERAL:
 			case NUMERIC_LITERAL:
 				{
@@ -452,8 +452,8 @@ public class SplParser extends Parser {
 				setState(102);
 				((StatementContext)_localctx).id = match(T__7);
 				setState(103);
-				((StatementContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-				 ((StatementContext)_localctx).result =  factory.createRead(((StatementContext)_localctx).id, ((StatementContext)_localctx).IDENTIFIER); 
+				((StatementContext)_localctx).IDEN = match(IDEN);
+				 ((StatementContext)_localctx).result =  factory.createRead(((StatementContext)_localctx).id, ((StatementContext)_localctx).IDEN); 
 				}
 				break;
 			default:
@@ -475,10 +475,10 @@ public class SplParser extends Parser {
 	public static class DvarbContext extends ParserRuleContext {
 		public SplStatementNode result;
 		public Token id;
-		public Token IDENTIFIER;
-		public List<TerminalNode> IDENTIFIER() { return getTokens(SplParser.IDENTIFIER); }
-		public TerminalNode IDENTIFIER(int i) {
-			return getToken(SplParser.IDENTIFIER, i);
+		public Token IDEN;
+		public List<TerminalNode> IDEN() { return getTokens(SplParser.IDEN); }
+		public TerminalNode IDEN(int i) {
+			return getToken(SplParser.IDEN, i);
 		}
 		public DvarbContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -497,8 +497,8 @@ public class SplParser extends Parser {
 			((DvarbContext)_localctx).id = match(T__8);
 			 List<Token> variables = new ArrayList<>(); 
 			setState(109);
-			((DvarbContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-			 variables.add(((DvarbContext)_localctx).IDENTIFIER); 
+			((DvarbContext)_localctx).IDEN = match(IDEN);
+			 variables.add(((DvarbContext)_localctx).IDEN); 
 			setState(116);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -508,8 +508,8 @@ public class SplParser extends Parser {
 				setState(111);
 				match(T__1);
 				setState(112);
-				((DvarbContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-				 variables.add(((DvarbContext)_localctx).IDENTIFIER); 
+				((DvarbContext)_localctx).IDEN = match(IDEN);
+				 variables.add(((DvarbContext)_localctx).IDEN); 
 				}
 				}
 				setState(118);
@@ -533,11 +533,11 @@ public class SplParser extends Parser {
 	public static class DconstContext extends ParserRuleContext {
 		public SplStatementNode result;
 		public Token id;
-		public Token IDENTIFIER;
+		public Token IDEN;
 		public ExpressionContext expression;
-		public List<TerminalNode> IDENTIFIER() { return getTokens(SplParser.IDENTIFIER); }
-		public TerminalNode IDENTIFIER(int i) {
-			return getToken(SplParser.IDENTIFIER, i);
+		public List<TerminalNode> IDEN() { return getTokens(SplParser.IDEN); }
+		public TerminalNode IDEN(int i) {
+			return getToken(SplParser.IDEN, i);
 		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
@@ -562,8 +562,8 @@ public class SplParser extends Parser {
 			((DconstContext)_localctx).id = match(T__9);
 			 List<TokenAndValue> tokenValues = new ArrayList<>(); 
 			setState(123);
-			((DconstContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-			 TokenAndValue current = new TokenAndValue(((DconstContext)_localctx).IDENTIFIER); 
+			((DconstContext)_localctx).IDEN = match(IDEN);
+			 TokenAndValue current = new TokenAndValue(((DconstContext)_localctx).IDEN); 
 			setState(125);
 			match(T__10);
 			setState(126);
@@ -579,8 +579,8 @@ public class SplParser extends Parser {
 				setState(128);
 				match(T__1);
 				setState(129);
-				((DconstContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-				 current = new TokenAndValue(((DconstContext)_localctx).IDENTIFIER); 
+				((DconstContext)_localctx).IDEN = match(IDEN);
+				 current = new TokenAndValue(((DconstContext)_localctx).IDEN); 
 				setState(131);
 				match(T__10);
 				setState(132);
@@ -857,7 +857,7 @@ public class SplParser extends Parser {
 			setState(189);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDENTIFIER) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDEN) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
 				{
 				setState(186);
 				((Return_statementContext)_localctx).expression = expression();
@@ -1194,7 +1194,7 @@ public class SplParser extends Parser {
 
 	public static class FactorContext extends ParserRuleContext {
 		public SplExpressionNode result;
-		public Token IDENTIFIER;
+		public Token IDEN;
 		public Member_expressionContext member_expression;
 		public Token STRING_LITERAL;
 		public Token sign;
@@ -1202,7 +1202,7 @@ public class SplParser extends Parser {
 		public Token s;
 		public ExpressionContext expr;
 		public Token e;
-		public TerminalNode IDENTIFIER() { return getToken(SplParser.IDENTIFIER, 0); }
+		public TerminalNode IDEN() { return getToken(SplParser.IDEN, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(SplParser.STRING_LITERAL, 0); }
 		public TerminalNode NUMERIC_LITERAL() { return getToken(SplParser.NUMERIC_LITERAL, 0); }
 		public ExpressionContext expression() {
@@ -1227,11 +1227,11 @@ public class SplParser extends Parser {
 			setState(265);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
-			case IDENTIFIER:
+			case IDEN:
 				{
 				setState(245);
-				((FactorContext)_localctx).IDENTIFIER = match(IDENTIFIER);
-				 SplExpressionNode assignmentName = factory.createStringLiteral(((FactorContext)_localctx).IDENTIFIER, false); 
+				((FactorContext)_localctx).IDEN = match(IDEN);
+				 SplExpressionNode assignmentName = factory.createStringLiteral(((FactorContext)_localctx).IDEN, false); 
 				setState(251);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,15,_ctx) ) {
@@ -1362,7 +1362,7 @@ public class SplParser extends Parser {
 				setState(281);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDENTIFIER) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDEN) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
 					{
 					setState(270);
 					((Member_expressionContext)_localctx).expression = expression();

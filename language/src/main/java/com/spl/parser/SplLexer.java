@@ -24,7 +24,7 @@ public class SplLexer extends Lexer {
 		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, WS=30, COMMENT=31, LINE_COMMENT=32, 
-		IDENTIFIER=33, STRING_LITERAL=34, NUMERIC_LITERAL=35;
+		IDEN=33, STRING_LITERAL=34, NUMERIC_LITERAL=35;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
@@ -38,7 +38,7 @@ public class SplLexer extends Lexer {
 		"T__9", "T__10", "T__11", "T__12", "T__13", "T__14", "T__15", "T__16", 
 		"T__17", "T__18", "T__19", "T__20", "T__21", "T__22", "T__23", "T__24", 
 		"T__25", "T__26", "T__27", "T__28", "WS", "COMMENT", "LINE_COMMENT", "LETTER", 
-		"NON_ZERO_DIGIT", "DIGIT", "TAB", "STRING_CHAR", "IDENTIFIER", "STRING_LITERAL", 
+		"NON_ZERO_DIGIT", "DIGIT", "TAB", "STRING_CHAR", "IDEN", "STRING_LITERAL", 
 		"NUMERIC_LITERAL"
 	};
 
@@ -51,7 +51,7 @@ public class SplLexer extends Lexer {
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, "WS", "COMMENT", "LINE_COMMENT", "IDENTIFIER", 
+		null, null, null, null, null, null, "WS", "COMMENT", "LINE_COMMENT", "IDEN", 
 		"STRING_LITERAL", "NUMERIC_LITERAL"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);

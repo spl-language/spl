@@ -1,8 +1,5 @@
 main ( )
 begin
-    const i = 3;
-    const m =3, n =-3;
-print n;
     int x, y;
     read x;
     read y;
