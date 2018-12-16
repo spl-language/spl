@@ -7,6 +7,9 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.spl.common.SplType;
+import com.spl.exceptions.SplException;
+import com.spl.nodes.SlotInfo;
 import com.spl.nodes.SplExpressionNode;
 
 /**
@@ -65,6 +68,12 @@ public abstract class SplWriteLocalVariableNode extends SplExpressionNode {
          *
          * No-op if kind is already Object.
          */
+        SlotInfo info = (SlotInfo) getSlot().getInfo();
+        if (info.getType().isInt() && !(value instanceof Long)) {
+            throw new SplException("Not valid type");
+        } else if (SplType.BOOL.equals(info.getType()) && !(value instanceof Long)) {
+            throw new SplException("Not valid type");
+        }
         frame.getFrameDescriptor().setFrameSlotKind(getSlot(), FrameSlotKind.Object);
 
         frame.setObject(getSlot(), value);

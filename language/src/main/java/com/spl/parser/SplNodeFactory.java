@@ -18,8 +18,8 @@ import com.spl.exceptions.SplTypeErrorException;
 import com.spl.nodes.SlotInfo;
 import com.spl.nodes.SplBinaryNode;
 import com.spl.nodes.SplExpressionNode;
-import com.spl.nodes.SplStatementNode;
 import com.spl.nodes.SplRootNode;
+import com.spl.nodes.SplStatementNode;
 import com.spl.nodes.access.SplReadPropertyNode;
 import com.spl.nodes.access.SplReadPropertyNodeGen;
 import com.spl.nodes.access.SplWritePropertyNode;
@@ -64,7 +64,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ToneNodeFactory {
+public class SplNodeFactory {
 
     /**
      * Local variable names that are visible in the current block. Variables are not visible outside
@@ -101,7 +101,7 @@ public class ToneNodeFactory {
     private LexicalScope lexicalScope;
     private final SplLanguage language;
 
-    public ToneNodeFactory(SplLanguage language, Source source) {
+    public SplNodeFactory(SplLanguage language, Source source) {
         this.language = language;
         this.source = source;
         this.allFunctions = new HashMap<>();
@@ -417,7 +417,7 @@ public class ToneNodeFactory {
             throw new SplException("Variable " + nameOfVariable.getText() + " is not declared.\nDeclare it before use it.\nint " + nameOfVariable.getText() + ";\" ");
         } else {
             Object info = frameSlot.getInfo();
-            if (info != null && !((SlotInfo) info).isUpdatable()) {
+            if (info != null && !((SlotInfo) info).getType().isUpdatable()) {
                 throw new SplException("You can't update const value.");
             }
         }
@@ -432,9 +432,10 @@ public class ToneNodeFactory {
     }
 
     public SplStatementNode declareIntVariables(Token nameOfType, List<Token> nameOfVariables) {
+        SplType splType = SplType.getByHumaneType(nameOfType.getText());
 
         SplListOfNodes result = new SplListOfNodes(nameOfVariables.stream().map(Token::getText)
-                .map(variableName -> frameDescriptor.addFrameSlot(variableName, new SlotInfo(true, SplType.INT), FrameSlotKind.Illegal))
+                .map(variableName -> frameDescriptor.addFrameSlot(variableName, new SlotInfo(splType), FrameSlotKind.Illegal))
                 .map(frameSlot -> {
                     SplLongLiteralNode toneLongLiteralNode = new SplLongLiteralNode(0);
                     return SplWriteLocalVariableNodeGen.create(toneLongLiteralNode, frameSlot);
@@ -445,14 +446,20 @@ public class ToneNodeFactory {
         return result;
     }
 
-    public SplStatementNode declareConstVariable(Token nameOfType, Token nameOfVariable, SplExpressionNode expressionNode, boolean stopDebugHere) {
-        FrameSlot frameSlot = frameDescriptor.addFrameSlot(nameOfVariable.getText(), new SlotInfo(false, SplType.INT), FrameSlotKind.Illegal);
-        lexicalScope.locals.put(nameOfVariable.getText(), frameSlot);
-        final SplWriteLocalVariableNode result = SplWriteLocalVariableNodeGen.create(expressionNode, frameSlot);
-        result.setSourceSection(nameOfType.getStartIndex(), expressionNode.getSourceEndIndex() - nameOfType.getStartIndex());
-        if (stopDebugHere) {
-            result.addExpressionTag();
-        }
+    public SplStatementNode declareConstVariable(Token nameOfType, List<TokenAndValue> tokenAndValues) {
+        SplStatementNode[] splStatementNodes = tokenAndValues.stream()
+                .map(tokenAndValue -> {
+                    String variableName = tokenAndValue.getToken().getText();
+                    FrameSlot frameSlot = frameDescriptor.addFrameSlot(variableName, new SlotInfo(SplType.CONST), FrameSlotKind.Illegal);
+                    lexicalScope.locals.put(variableName, frameSlot);
+                    return SplWriteLocalVariableNodeGen.create(tokenAndValue.getSplExpressionNode(), frameSlot);
+                })
+                .toArray(SplStatementNode[]::new);
+
+        SplListOfNodes result = new SplListOfNodes(splStatementNodes);
+
+        result.setSourceSection(nameOfType.getStartIndex(), tokenAndValues.get(tokenAndValues.size() - 1).getSplExpressionNode().getSourceEndIndex() - nameOfType.getStartIndex());
+        result.addExpressionTag();
         return result;
     }
 
@@ -483,19 +490,27 @@ public class ToneNodeFactory {
         String name = ((SplStringLiteralNode) nameNode).executeGeneric(null);
         FrameSlot frameSlot;
         if (create) {
-            frameSlot = frameDescriptor.addFrameSlot(name, new SlotInfo(true, SplType.OBJECT), FrameSlotKind.Illegal);
+            frameSlot = frameDescriptor.addFrameSlot(name, new SlotInfo(SplType.OBJECT), FrameSlotKind.Illegal);
         } else {
             frameSlot = frameDescriptor.findFrameSlot(name);
             if (frameSlot == null) {
                 throw new SplException("Variable \"" + name + "\" is not declared.\nDeclare it before assign something.");
             } else {
                 Object info = frameSlot.getInfo();
-                if (info != null && !((SlotInfo) info).isUpdatable()) {
-                    throw SplTypeErrorException.typeError(null, "You can't update const value.");
+                if (info != null && !((SlotInfo) info).getType().isUpdatable()) {
+                    throw new SplException("Variable \"" + name + "\" is const. You can't update const value.");
                 }
             }
         }
         lexicalScope.locals.put(name, frameSlot);
+        if (((SlotInfo)frameSlot.getInfo()).getType().isInt()) {
+            if (!(valueNode instanceof SplLongLiteralNode ||
+                    valueNode instanceof SplFunctionLiteralNode ||
+                    valueNode instanceof SplInvokeNode ||
+                    valueNode instanceof SplReadLocalVariableNode)) {
+                throw new SplException("Incompatible types.");
+            }
+        }
         final SplExpressionNode result = SplWriteLocalVariableNodeGen.create(valueNode, frameSlot);
 
         if (valueNode.hasSource()) {
@@ -565,14 +580,16 @@ public class ToneNodeFactory {
         return result;
     }
 
-    public SplExpressionNode createNumericLiteral(Token literalToken) {
+    public SplExpressionNode createNumericLiteral(Token sign, Token literalToken) {
         SplExpressionNode result;
+        String digits = literalToken.getText();
+        String number = (sign == null ? "" : sign.getText()) + digits;
         try {
             /* Try if the literal is small enough to fit into a long value. */
-            result = new SplLongLiteralNode(Long.parseLong(literalToken.getText()));
+            result = new SplLongLiteralNode(Long.parseLong(number));
         } catch (NumberFormatException ex) {
             /* Overflow of long value, so fall back to BigInteger. */
-            result = new SplBigIntegerLiteralNode(new BigInteger(literalToken.getText()));
+            result = new SplBigIntegerLiteralNode(new BigInteger(number));
         }
         srcFromToken(result, literalToken);
         result.addExpressionTag();

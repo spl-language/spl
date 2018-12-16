@@ -19,7 +19,7 @@ import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.SplExpressionNode;
 import com.spl.nodes.SplStatementNode;
 import com.spl.parser.ToneParseError;
-import com.spl.parser.ToneNodeFactory;
+import com.spl.parser.SplNodeFactory;
 import com.spl.parser.SplLexer;
 }
 
@@ -70,11 +70,11 @@ public static Map<String, RootCallTarget> parseSpl(SplLanguage language, Source 
 
 spl
 :
-def def* EOF
+dfunc dfunc* EOF
 ;
 
 // define functioin
-def
+dfunc
 :
 IDENTIFIER
 s='('
@@ -125,16 +125,18 @@ statement [boolean inLoop] returns [SplStatementNode result]
         IDENTIFIER                              { variables.add($IDENTIFIER); }
     )*                                          { $result = factory.declareIntVariables($id, variables); }
 |
-    id='const'
-    IDENTIFIER
+    id='const'                                  { List<TokenAndValue> tokenValues = new ArrayList<>(); }
+    IDENTIFIER                                  { TokenAndValue current = new TokenAndValue($IDENTIFIER); }
     '='
-    expression                                  { $result = factory.declareConstVariable($id, $IDENTIFIER, $expression.result, true); }
+    expression                                  { current.setSplExpressionNode($expression.result);
+                                                  tokenValues.add(current); }
     (
         ','
-        IDENTIFIER
+        IDENTIFIER                              { current = new TokenAndValue($IDENTIFIER); }
         '='
-        expression                              { $result = factory.declareConstVariable($id, $IDENTIFIER, $expression.result, false); }
-    )
+        expression                              { current.setSplExpressionNode($expression.result);
+                                                  tokenValues.add(current); }
+    )                                           { $result = factory.declareConstVariable($id, tokenValues); }
 |
     id='print'
     expression                                  { $result = factory.createPrint($id, $expression.result); }
@@ -259,7 +261,8 @@ factor returns [SplExpressionNode result]
 |
     STRING_LITERAL                              { $result = factory.createStringLiteral($STRING_LITERAL, true); }
 |
-    NUMERIC_LITERAL                             { $result = factory.createNumericLiteral($NUMERIC_LITERAL); }
+    sign=('+'| '-')?
+    NUMERIC_LITERAL                             { $result = factory.createNumericLiteral($sign, $NUMERIC_LITERAL); }
 |
     s='('
     expr=expression
@@ -309,9 +312,6 @@ LINE_COMMENT : '//' ~[\r\n]* -> skip;
 fragment LETTER : [A-Z] | [a-z] | '_' | '$';
 fragment NON_ZERO_DIGIT : [1-9];
 fragment DIGIT : [0-9];
-fragment HEX_DIGIT : [0-9] | [a-f] | [A-F];
-fragment OCT_DIGIT : [0-7];
-fragment BINARY_DIGIT : '0' | '1';
 fragment TAB : '\t';
 fragment STRING_CHAR : ~('"' | '\\' | '\r' | '\n');
 
