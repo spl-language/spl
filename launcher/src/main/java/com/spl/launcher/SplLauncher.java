@@ -1,4 +1,4 @@
-package com.tone.launcher;
+package com.spl.launcher;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.PolyglotException;
@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ToneLauncher {
+public final class SplLauncher {
 
     private static final String TONE = "spl";
 
