@@ -110,14 +110,14 @@ statement [boolean inLoop] returns [SplStatementNode result]
 |
     return_statement                            { $result = $return_statement.result; }
 |
-    expression                                  { $result = $expression.result; }
+    expr                                        { $result = $expr.result; }
 |
     dvarb                                       { $result = $dvarb.result; }
 |
     dconst                                      { $result = $dconst.result; }
 |
     id='print'
-    expression                                  { $result = factory.createPrint($id, $expression.result); }
+    expr                                        { $result = factory.createPrint($id, $expr.result); }
 |
     id='read'
     IDEN                                        { $result = factory.createRead($id, $IDEN); }
@@ -141,13 +141,13 @@ dconst returns [SplStatementNode result]
     id='const'                                  { List<TokenAndValue> tokenValues = new ArrayList<>(); }
     IDEN                                        { TokenAndValue current = new TokenAndValue($IDEN); }
     '='
-    expression                                  { current.setSplExpressionNode($expression.result);
+    expr                                        { current.setSplExpressionNode($expr.result);
                                                   tokenValues.add(current); }
     (
         ','
         IDEN                                    { current = new TokenAndValue($IDEN); }
         '='
-        expression                              { current.setSplExpressionNode($expression.result);
+        expr                                    { current.setSplExpressionNode($expr.result);
                                                   tokenValues.add(current); }
     )*                                          { $result = factory.declareConstVariable($id, tokenValues); }
 ;
@@ -156,7 +156,7 @@ dconst returns [SplStatementNode result]
 while_statement returns [SplStatementNode result]
 :
 w='while'
-condition=expression
+condition=expr
 block=while_block                                { $result = factory.createWhile($w, $condition.result, $block.result); }
 ;
 
@@ -178,7 +178,7 @@ e='end'
 if_statement [boolean inLoop] returns [SplStatementNode result]
 :
 i='if'
-condition=expression
+condition=expr
 then=if_block[inLoop]                           { $result = factory.createIf($i, $condition.result, $then.result); }
 ;
 
@@ -200,12 +200,12 @@ return_statement returns [SplStatementNode result]
 :
 r='return'                                      { SplExpressionNode value = null; }
 (
-    expression                                  { value = $expression.result; }
+    expr                                        { value = $expr.result; }
 )?                                              { $result = factory.createReturn($r, value); }
 ;
 
 
-expression returns [SplExpressionNode result]
+expr returns [SplExpressionNode result]
 :
 logic_term                                      { $result = $logic_term.result; }
 (
@@ -271,8 +271,8 @@ factor returns [SplExpressionNode result]
     NUMERIC_LITERAL                             { $result = factory.createNumericLiteral($sign, $NUMERIC_LITERAL); }
 |
     s='('
-    expr=expression
-    e=')'                                       { $result = factory.createParenExpression($expr.result, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
+    ex=expr
+    e=')'                                       { $result = factory.createParenExpression($ex.result, $s.getStartIndex(), $e.getStopIndex() - $s.getStartIndex() + 1); }
 )
 ;
 
@@ -286,23 +286,23 @@ member_expression [SplExpressionNode r, SplExpressionNode assignmentReceiver, Sp
                                                       receiver = factory.createRead(assignmentName);
                                                   } }
     (
-        expression                              { parameters.add($expression.result); }
+        expr                                    { parameters.add($expr.result); }
         (
             ','
-            expression                          { parameters.add($expression.result); }
+            expr                                { parameters.add($expr.result); }
         )*
     )?
     e=')'
                                                 { $result = factory.createCall(receiver, parameters, $e); }
 |
     '='
-    expression                                  { if (assignmentName == null) {
-                                                      SemErr($expression.start, "invalid assignment target");
-                                                  } else if (assignmentReceiver == null) {
-                                                      $result = factory.createAssignment(assignmentName, $expression.result);
-                                                  } else {
-                                                      $result = factory.createWriteProperty(assignmentReceiver, assignmentName, $expression.result);
-                                                  } }
+    expr                                        { if (assignmentName == null) {
+                                                      SemErr($expr.start, "invalid assignment target");
+                                                } else if (assignmentReceiver == null) {
+                                                      $result = factory.createAssignment(assignmentName, $expr.result);
+                                                } else {
+                                                      $result = factory.createWriteProperty(assignmentReceiver, assignmentName, $expr.result);
+                                                } }
 )
 (
     member_expression[$result, receiver, nestedAssignmentName] { $result = $member_expression.result; }

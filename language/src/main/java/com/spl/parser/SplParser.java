@@ -42,12 +42,12 @@ public class SplParser extends Parser {
 	public static final int
 		RULE_spl = 0, RULE_dfunc = 1, RULE_body = 2, RULE_statement = 3, RULE_dvarb = 4, 
 		RULE_dconst = 5, RULE_while_statement = 6, RULE_while_block = 7, RULE_if_statement = 8, 
-		RULE_if_block = 9, RULE_return_statement = 10, RULE_expression = 11, RULE_logic_term = 12, 
+		RULE_if_block = 9, RULE_return_statement = 10, RULE_expr = 11, RULE_logic_term = 12, 
 		RULE_logic_factor = 13, RULE_arithmetic = 14, RULE_term = 15, RULE_factor = 16, 
 		RULE_member_expression = 17;
 	public static final String[] ruleNames = {
 		"spl", "dfunc", "body", "statement", "dvarb", "dconst", "while_statement", 
-		"while_block", "if_statement", "if_block", "return_statement", "expression", 
+		"while_block", "if_statement", "if_block", "return_statement", "expr", 
 		"logic_term", "logic_factor", "arithmetic", "term", "factor", "member_expression"
 	};
 
@@ -350,7 +350,7 @@ public class SplParser extends Parser {
 		public While_statementContext while_statement;
 		public If_statementContext if_statement;
 		public Return_statementContext return_statement;
-		public ExpressionContext expression;
+		public ExprContext expr;
 		public DvarbContext dvarb;
 		public DconstContext dconst;
 		public Token id;
@@ -364,8 +364,8 @@ public class SplParser extends Parser {
 		public Return_statementContext return_statement() {
 			return getRuleContext(Return_statementContext.class,0);
 		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public DvarbContext dvarb() {
 			return getRuleContext(DvarbContext.class,0);
@@ -420,8 +420,8 @@ public class SplParser extends Parser {
 			case NUMERIC_LITERAL:
 				{
 				setState(89);
-				((StatementContext)_localctx).expression = expression();
-				 ((StatementContext)_localctx).result =  ((StatementContext)_localctx).expression.result; 
+				((StatementContext)_localctx).expr = expr();
+				 ((StatementContext)_localctx).result =  ((StatementContext)_localctx).expr.result; 
 				}
 				break;
 			case T__8:
@@ -443,8 +443,8 @@ public class SplParser extends Parser {
 				setState(98);
 				((StatementContext)_localctx).id = match(T__6);
 				setState(99);
-				((StatementContext)_localctx).expression = expression();
-				 ((StatementContext)_localctx).result =  factory.createPrint(((StatementContext)_localctx).id, ((StatementContext)_localctx).expression.result); 
+				((StatementContext)_localctx).expr = expr();
+				 ((StatementContext)_localctx).result =  factory.createPrint(((StatementContext)_localctx).id, ((StatementContext)_localctx).expr.result); 
 				}
 				break;
 			case T__7:
@@ -534,16 +534,16 @@ public class SplParser extends Parser {
 		public SplStatementNode result;
 		public Token id;
 		public Token IDEN;
-		public ExpressionContext expression;
+		public ExprContext expr;
 		public List<TerminalNode> IDEN() { return getTokens(SplParser.IDEN); }
 		public TerminalNode IDEN(int i) {
 			return getToken(SplParser.IDEN, i);
 		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
 		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
 		}
 		public DconstContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -567,8 +567,8 @@ public class SplParser extends Parser {
 			setState(125);
 			match(T__10);
 			setState(126);
-			((DconstContext)_localctx).expression = expression();
-			 current.setSplExpressionNode(((DconstContext)_localctx).expression.result);
+			((DconstContext)_localctx).expr = expr();
+			 current.setSplExpressionNode(((DconstContext)_localctx).expr.result);
 			                                                  tokenValues.add(current); 
 			setState(137);
 			_errHandler.sync(this);
@@ -584,8 +584,8 @@ public class SplParser extends Parser {
 				setState(131);
 				match(T__10);
 				setState(132);
-				((DconstContext)_localctx).expression = expression();
-				 current.setSplExpressionNode(((DconstContext)_localctx).expression.result);
+				((DconstContext)_localctx).expr = expr();
+				 current.setSplExpressionNode(((DconstContext)_localctx).expr.result);
 				                                                  tokenValues.add(current); 
 				}
 				}
@@ -610,10 +610,10 @@ public class SplParser extends Parser {
 	public static class While_statementContext extends ParserRuleContext {
 		public SplStatementNode result;
 		public Token w;
-		public ExpressionContext condition;
+		public ExprContext condition;
 		public While_blockContext block;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public While_blockContext while_block() {
 			return getRuleContext(While_blockContext.class,0);
@@ -633,7 +633,7 @@ public class SplParser extends Parser {
 			setState(142);
 			((While_statementContext)_localctx).w = match(T__11);
 			setState(143);
-			((While_statementContext)_localctx).condition = expression();
+			((While_statementContext)_localctx).condition = expr();
 			setState(144);
 			((While_statementContext)_localctx).block = while_block();
 			 ((While_statementContext)_localctx).result =  factory.createWhile(((While_statementContext)_localctx).w, ((While_statementContext)_localctx).condition.result, ((While_statementContext)_localctx).block.result); 
@@ -720,10 +720,10 @@ public class SplParser extends Parser {
 		public boolean inLoop;
 		public SplStatementNode result;
 		public Token i;
-		public ExpressionContext condition;
+		public ExprContext condition;
 		public If_blockContext then;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public If_blockContext if_block() {
 			return getRuleContext(If_blockContext.class,0);
@@ -745,7 +745,7 @@ public class SplParser extends Parser {
 			setState(163);
 			((If_statementContext)_localctx).i = match(T__13);
 			setState(164);
-			((If_statementContext)_localctx).condition = expression();
+			((If_statementContext)_localctx).condition = expr();
 			setState(165);
 			((If_statementContext)_localctx).then = if_block(inLoop);
 			 ((If_statementContext)_localctx).result =  factory.createIf(((If_statementContext)_localctx).i, ((If_statementContext)_localctx).condition.result, ((If_statementContext)_localctx).then.result); 
@@ -834,9 +834,9 @@ public class SplParser extends Parser {
 	public static class Return_statementContext extends ParserRuleContext {
 		public SplStatementNode result;
 		public Token r;
-		public ExpressionContext expression;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExprContext expr;
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public Return_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -860,8 +860,8 @@ public class SplParser extends Parser {
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDEN) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
 				{
 				setState(186);
-				((Return_statementContext)_localctx).expression = expression();
-				 value = ((Return_statementContext)_localctx).expression.result; 
+				((Return_statementContext)_localctx).expr = expr();
+				 value = ((Return_statementContext)_localctx).expr.result; 
 				}
 			}
 
@@ -879,7 +879,7 @@ public class SplParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ExpressionContext extends ParserRuleContext {
+	public static class ExprContext extends ParserRuleContext {
 		public SplExpressionNode result;
 		public Logic_termContext logic_term;
 		public Token op;
@@ -889,22 +889,22 @@ public class SplParser extends Parser {
 		public Logic_termContext logic_term(int i) {
 			return getRuleContext(Logic_termContext.class,i);
 		}
-		public ExpressionContext(ParserRuleContext parent, int invokingState) {
+		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_expression; }
+		@Override public int getRuleIndex() { return RULE_expr; }
 	}
 
-	public final ExpressionContext expression() throws RecognitionException {
-		ExpressionContext _localctx = new ExpressionContext(_ctx, getState());
-		enterRule(_localctx, 22, RULE_expression);
+	public final ExprContext expr() throws RecognitionException {
+		ExprContext _localctx = new ExprContext(_ctx, getState());
+		enterRule(_localctx, 22, RULE_expr);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(193);
-			((ExpressionContext)_localctx).logic_term = logic_term();
-			 ((ExpressionContext)_localctx).result =  ((ExpressionContext)_localctx).logic_term.result; 
+			((ExprContext)_localctx).logic_term = logic_term();
+			 ((ExprContext)_localctx).result =  ((ExprContext)_localctx).logic_term.result; 
 			setState(201);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
@@ -913,10 +913,10 @@ public class SplParser extends Parser {
 					{
 					{
 					setState(195);
-					((ExpressionContext)_localctx).op = match(T__16);
+					((ExprContext)_localctx).op = match(T__16);
 					setState(196);
-					((ExpressionContext)_localctx).logic_term = logic_term();
-					 ((ExpressionContext)_localctx).result =  factory.createBinary(((ExpressionContext)_localctx).op, _localctx.result, ((ExpressionContext)_localctx).logic_term.result); 
+					((ExprContext)_localctx).logic_term = logic_term();
+					 ((ExprContext)_localctx).result =  factory.createBinary(((ExprContext)_localctx).op, _localctx.result, ((ExprContext)_localctx).logic_term.result); 
 					}
 					} 
 				}
@@ -1200,13 +1200,13 @@ public class SplParser extends Parser {
 		public Token sign;
 		public Token NUMERIC_LITERAL;
 		public Token s;
-		public ExpressionContext expr;
+		public ExprContext ex;
 		public Token e;
 		public TerminalNode IDEN() { return getToken(SplParser.IDEN, 0); }
 		public TerminalNode STRING_LITERAL() { return getToken(SplParser.STRING_LITERAL, 0); }
 		public TerminalNode NUMERIC_LITERAL() { return getToken(SplParser.NUMERIC_LITERAL, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public Member_expressionContext member_expression() {
 			return getRuleContext(Member_expressionContext.class,0);
@@ -1290,10 +1290,10 @@ public class SplParser extends Parser {
 				setState(260);
 				((FactorContext)_localctx).s = match(T__0);
 				setState(261);
-				((FactorContext)_localctx).expr = expression();
+				((FactorContext)_localctx).ex = expr();
 				setState(262);
 				((FactorContext)_localctx).e = match(T__2);
-				 ((FactorContext)_localctx).result =  factory.createParenExpression(((FactorContext)_localctx).expr.result, ((FactorContext)_localctx).s.getStartIndex(), ((FactorContext)_localctx).e.getStopIndex() - ((FactorContext)_localctx).s.getStartIndex() + 1); 
+				 ((FactorContext)_localctx).result =  factory.createParenExpression(((FactorContext)_localctx).ex.result, ((FactorContext)_localctx).s.getStartIndex(), ((FactorContext)_localctx).e.getStopIndex() - ((FactorContext)_localctx).s.getStartIndex() + 1); 
 				}
 				break;
 			default:
@@ -1317,14 +1317,14 @@ public class SplParser extends Parser {
 		public SplExpressionNode assignmentReceiver;
 		public SplExpressionNode assignmentName;
 		public SplExpressionNode result;
-		public ExpressionContext expression;
+		public ExprContext expr;
 		public Token e;
 		public Member_expressionContext member_expression;
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
 		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
 		}
 		public Member_expressionContext member_expression() {
 			return getRuleContext(Member_expressionContext.class,0);
@@ -1365,8 +1365,8 @@ public class SplParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__24) | (1L << T__25) | (1L << IDEN) | (1L << STRING_LITERAL) | (1L << NUMERIC_LITERAL))) != 0)) {
 					{
 					setState(270);
-					((Member_expressionContext)_localctx).expression = expression();
-					 parameters.add(((Member_expressionContext)_localctx).expression.result); 
+					((Member_expressionContext)_localctx).expr = expr();
+					 parameters.add(((Member_expressionContext)_localctx).expr.result); 
 					setState(278);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -1376,8 +1376,8 @@ public class SplParser extends Parser {
 						setState(272);
 						match(T__1);
 						setState(273);
-						((Member_expressionContext)_localctx).expression = expression();
-						 parameters.add(((Member_expressionContext)_localctx).expression.result); 
+						((Member_expressionContext)_localctx).expr = expr();
+						 parameters.add(((Member_expressionContext)_localctx).expr.result); 
 						}
 						}
 						setState(280);
@@ -1397,14 +1397,14 @@ public class SplParser extends Parser {
 				setState(285);
 				match(T__10);
 				setState(286);
-				((Member_expressionContext)_localctx).expression = expression();
+				((Member_expressionContext)_localctx).expr = expr();
 				 if (assignmentName == null) {
-				                                                      SemErr((((Member_expressionContext)_localctx).expression!=null?(((Member_expressionContext)_localctx).expression.start):null), "invalid assignment target");
-				                                                  } else if (assignmentReceiver == null) {
-				                                                      ((Member_expressionContext)_localctx).result =  factory.createAssignment(assignmentName, ((Member_expressionContext)_localctx).expression.result);
-				                                                  } else {
-				                                                      ((Member_expressionContext)_localctx).result =  factory.createWriteProperty(assignmentReceiver, assignmentName, ((Member_expressionContext)_localctx).expression.result);
-				                                                  } 
+				                                                      SemErr((((Member_expressionContext)_localctx).expr!=null?(((Member_expressionContext)_localctx).expr.start):null), "invalid assignment target");
+				                                                } else if (assignmentReceiver == null) {
+				                                                      ((Member_expressionContext)_localctx).result =  factory.createAssignment(assignmentName, ((Member_expressionContext)_localctx).expr.result);
+				                                                } else {
+				                                                      ((Member_expressionContext)_localctx).result =  factory.createWriteProperty(assignmentReceiver, assignmentName, ((Member_expressionContext)_localctx).expr.result);
+				                                                } 
 				}
 				break;
 			default:
