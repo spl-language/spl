@@ -10,15 +10,7 @@ import com.spl.runtime.SplContext;
 
 import java.io.PrintWriter;
 
-/**
- * Builtin function to write a value to the {@link SplContext#getOutput() standard output}. The
- * different specialization leverage the typed {@code println} methods available in Java, i.e.,
- * primitive values are printed without converting them to a {@link String} first.
- * <p>
- * Printing involves a lot of Java code, so we need to tell the optimizing system that it should not
- * unconditionally inline everything reachable from the println() method. This is done via the
- * {@link TruffleBoundary} annotations.
- */
+
 @NodeInfo(shortName = "print")
 @NodeChild("expressionToPrint")
 public abstract class SplPrintBuiltin extends SplExpressionNode {

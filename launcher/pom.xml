@@ -52,7 +52,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>tone-launcher</finalName>
+                            <finalName>spl-launcher</finalName>
                             <artifactSet>
                                 <excludes>
                                     <exclude>junit:junit</exclude>

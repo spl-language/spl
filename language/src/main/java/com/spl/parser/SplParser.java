@@ -1,4 +1,3 @@
-// Generated from /home/george/Projects/spl/language/src/main/java/com/spl/parser/Spl.g4 by ANTLR 4.7
 package com.spl.parser;
 
 // DO NOT MODIFY - generated from Spl.g4

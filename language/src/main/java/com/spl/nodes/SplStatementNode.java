@@ -17,11 +17,10 @@ import com.oracle.truffle.api.source.SourceSection;
 import java.io.File;
 
 /**
- * The base class of all Truffle nodes for Tone. All nodes (even expressions) can be used as
- * statements, i.e., without returning a value. The {@link VirtualFrame} provides access to the
- * local variables.
+ * Батьківський клас для всіх вершин. Клас {@link VirtualFrame} надає доступ до
+ * локальних змінних.
  */
-@NodeInfo(language = "Tone", description = "The abstract base node for all Tone statements")
+@NodeInfo(language = "Spl", description = "The abstract base node for all Tone statements")
 @GenerateWrapper
 @ReportPolymorphism
 public abstract class SplStatementNode extends Node implements InstrumentableNode {
@@ -36,14 +35,12 @@ public abstract class SplStatementNode extends Node implements InstrumentableNod
     private boolean hasRootTag;
 
     /**
-     * The creation of source section can be implemented lazily by looking up the root node source
-     * and then creating the source section object using the indices stored in the node. This avoids
-     * the eager creation of source section objects during parsing and creates them only when they
-     * are needed. Alternatively, if the language uses source sections to implement language
-     * semantics, then it might be more efficient to eagerly create source sections and store it in
-     * the AST.
+     * Створення вихідного розділу можна здійснити ліниво (lazily), переглянувши джерело кореневого вузла
+     * а потім створити об'єкт вихідного розділу, використовуючи індекси, що зберігаються в вузлі. Це уникне
+     * небажане створення об'єктів вихідного розділу під час аналізу та створює їх лише тоді, коли вони реально
+     * потрібні.
      *
-     * For more details see {@link InstrumentableNode}.
+     * Більше деталей {@link InstrumentableNode}.
      */
     @Override
     @TruffleBoundary
@@ -120,19 +117,19 @@ public abstract class SplStatementNode extends Node implements InstrumentableNod
     }
 
     /**
-     * Execute this node as as statement, where no return value is necessary.
+     * Виконати цю частину без повернення типу
      */
     public abstract void executeVoid(VirtualFrame frame);
 
     /**
-     * Marks this node as being a {@link StandardTags.StatementTag} for instrumentation purposes.
+     * Мітка для того щоб знати чи можна використоувавити цю вершу для того щоб зупинити налагоджування
      */
     public final void addStatementTag() {
         hasStatementTag = true;
     }
 
     /**
-     * Marks this node as being a {@link StandardTags.RootTag} for instrumentation purposes.
+     * Мітка для того щоб описати що це коренева вершина
      */
     public final void addRootTag() {
         hasRootTag = true;
@@ -144,9 +141,7 @@ public abstract class SplStatementNode extends Node implements InstrumentableNod
     }
 
     /**
-     * Formats a source section of a node in human readable form. If no source section could be
-     * found it looks up the parent hierarchy until it finds a source section. Nodes where this was
-     * required append a <code>'~'</code> at the end.
+     * Форматування вихідного розділу вузла в читабельній формі.
      *
      * @param node the node to format.
      * @return a formatted source section string
