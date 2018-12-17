@@ -1,8 +1,10 @@
 main ( )
 begin
     int x, y;
-    read x;
-    read y;
+//    read x;
+//    read y;
+x = 2;
+y = 5;
     print exp (x, y)
 end
 
